@@ -1,958 +1,1197 @@
 <!DOCTYPE html>
 <html lang="ru" class="dark">
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GORKIY GASTROBAR | Конструктор коктейлей</title>
+    <title>ГОРЬКИЙ ГАСТРОБАР | Магия Вкуса</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Cormorant Garamond & Montserrat -->
+    <!-- Google Fonts: Cormorant Garamond & Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
-                        navy: {
-                            950: '#070b14',
-                            900: '#0a0f1d',
-                            800: '#0d1321',
-                            700: '#162038',
-                        },
-                        wine: {
-                            900: '#4a151b',
-                            800: '#631d26',
-                            700: '#722F37',
-                            600: '#8b1e2f',
-                            500: '#a8283b',
-                            400: '#c94a5d',
-                        },
-                        gold: {
-                            400: '#d4af37',
-                            300: '#e6c665',
-                        }
+                        night: '#060A11',
+                        topaz: { deep: '#0E1E36', DEFAULT: '#1A365D', glow: '#2B548E' },
+                        emerald: { deep: '#102B21', DEFAULT: '#23533D', light: '#488B6A' },
+                        ivory: { DEFAULT: '#F5F1E8', muted: '#A3B1C6' },
+                        gold: { DEFAULT: '#D4AF37', soft: '#EBD382' },
+                        ruby: { DEFAULT: '#8C1D35', light: '#B82946' }
                     },
                     fontFamily: {
                         serif: ['"Cormorant Garamond"', 'serif'],
-                        sans: ['Montserrat', 'sans-serif'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
                     }
                 }
             }
         }
     </script>
-
     <style>
-        body {
-            background-color: #0a0f1d;
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html, body {
+            height: 100dvh; width: 100vw; margin: 0; padding: 0; overflow: hidden;
+            background-color: #060A11;
             background-image: 
-                radial-gradient(at 10% 10%, rgba(114, 47, 55, 0.18) 0px, transparent 50%),
-                radial-gradient(at 90% 80%, rgba(22, 32, 56, 0.4) 0px, transparent 50%);
-            color: #f8fafc;
-            font-family: 'Montserrat', sans-serif;
-            overflow-x: hidden;
-            -webkit-tap-highlight-color: transparent;
+                radial-gradient(circle at 12% 15%, rgba(26, 54, 93, 0.55) 0%, transparent 48%),
+                radial-gradient(circle at 88% 22%, rgba(35, 83, 61, 0.42) 0%, transparent 45%),
+                radial-gradient(circle at 50% 90%, rgba(140, 29, 53, 0.28) 0%, transparent 55%);
+            color: #F5F1E8; font-family: 'Plus Jakarta Sans', sans-serif; user-select: none;
         }
-
-        /* Glassmorphism styles */
-        .glass-card {
-            background: rgba(13, 19, 33, 0.72);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        .font-serif { font-family: 'Cormorant Garamond', serif; }
+        .glass-stage {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.025) 100%);
+            backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);
+            border: 1px solid rgba(245, 241, 232, 0.12);
+            box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.65), inset 0 1px 0 0 rgba(255, 255, 255, 0.14);
         }
-
         .glass-item {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.07);
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(245, 241, 232, 0.09);
+            transition: background 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.15s ease;
+        }
+        .glass-item:active { transform: scale(0.98); }
+        .glass-item-active {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.18) 0%, rgba(26, 54, 93, 0.45) 100%);
+            border-color: rgba(212, 175, 55, 0.85);
+            box-shadow: 0 6px 18px -4px rgba(212, 175, 55, 0.25), inset 0 0 0 1px rgba(212, 175, 55, 0.45);
         }
 
-        .glass-item:hover {
-            background: rgba(255, 255, 255, 0.06);
-            border-color: rgba(255, 255, 255, 0.15);
+        /* Карточки и типографика без обрезания и наложений */
+        .item-title {
+            overflow-wrap: normal;
+            word-break: normal;
+            hyphens: none;
+            line-height: 1.2;
+        }
+        .item-sub {
+            overflow-wrap: normal;
+            word-break: normal;
+            line-height: 1.25;
         }
 
-        .glass-item.selected {
-            background: linear-gradient(135deg, rgba(139, 30, 47, 0.35) 0%, rgba(114, 47, 55, 0.15) 100%);
-            border-color: #a8283b;
-            box-shadow: 0 0 20px rgba(139, 30, 47, 0.3);
+        @keyframes floatGlass { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-2.5px); } }
+        @keyframes glassPop { 0% { transform: scale(0.96); } 50% { transform: scale(1.03); } 100% { transform: scale(1); } }
+        @keyframes iceBob { 0%, 100% { transform: translateY(0px) rotate(-10deg); } 50% { transform: translateY(-2.5px) rotate(-6deg); } }
+        @keyframes bubbleRise { 0% { transform: translateY(0) scale(0.7); opacity: 0; } 45% { opacity: 0.85; } 100% { transform: translateY(-48px) scale(1.2); opacity: 0; } }
+        @keyframes cardFade { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes shakerShake {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            20% { transform: rotate(-6deg) scale(1.02); }
+            40% { transform: rotate(6deg) scale(0.98); }
+            60% { transform: rotate(-4deg) scale(1.02); }
+            80% { transform: rotate(4deg) scale(1); }
+        }
+        @keyframes rippleWave {
+            0% { transform: scaleX(0.45); opacity: 0.85; }
+            50% { transform: scaleX(1.05); opacity: 0.45; }
+            100% { transform: scaleX(0.75); opacity: 0; }
         }
 
-        /* Custom Range Slider */
-        input[type=range] {
-            -webkit-appearance: none;
-            width: 100%;
-            background: transparent;
-        }
-        input[type=range]::-webkit-slider-runnable-track {
-            width: 100%;
-            height: 6px;
-            cursor: pointer;
-            background: rgba(255, 255, 255, 0.12);
-            border-radius: 999px;
-        }
-        input[type=range]::-webkit-slider-thumb {
-            height: 22px;
-            width: 22px;
-            border-radius: 50%;
-            background: #a8283b;
-            border: 2px solid #f8fafc;
-            cursor: pointer;
-            -webkit-appearance: none;
-            margin-top: -8px;
-            box-shadow: 0 0 12px rgba(168, 40, 59, 0.8);
-            transition: transform 0.15s ease;
-        }
-        input[type=range]::-webkit-slider-thumb:active {
-            transform: scale(1.2);
-        }
+        .glass-float { animation: floatGlass 4s ease-in-out infinite; }
+        .glass-pop-anim { animation: glassPop 0.36s cubic-bezier(0.22, 1, 0.36, 1); }
+        .shaker-anim { animation: shakerShake 0.45s ease-in-out; }
+        .ice-float { animation: iceBob 3.4s ease-in-out infinite; }
+        .bubble-anim { animation: bubbleRise 2.2s infinite ease-in; }
+        .step-transition { animation: cardFade 0.2s ease-out forwards; }
+        .ripple-active { animation: rippleWave 0.55s ease-out forwards; transform-origin: 60px center; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* Animations for cocktail SVG */
-        @keyframes floatBubble {
-            0% { transform: translateY(0) scale(0.8); opacity: 0; }
-            50% { opacity: 0.7; }
-            100% { transform: translateY(-70px) scale(1.2); opacity: 0; }
+        @media (max-height: 740px) {
+            body { padding-top: 4px; padding-bottom: 4px; }
+            .glass-stage { backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+            main { margin-top: 4px; margin-bottom: 4px; }
         }
-        .bubble-1 { animation: floatBubble 3s infinite ease-in; }
-        .bubble-2 { animation: floatBubble 4s infinite ease-in 1s; }
-        .bubble-3 { animation: floatBubble 2.6s infinite ease-in 0.5s; }
-        .bubble-4 { animation: floatBubble 3.5s infinite ease-in 1.8s; }
-
-        @keyframes smokeRise {
-            0% { transform: translateY(0) scale(1) rotate(0deg); opacity: 0.6; }
-            100% { transform: translateY(-35px) scale(1.5) rotate(8deg); opacity: 0; }
+        @media (max-width: 365px) {
+            body { padding-left: 8px; padding-right: 8px; }
+            #step-pill-0, #step-pill-1, #step-pill-2,
+            #step-pill-3, #step-pill-4 { font-size: 8.5px; letter-spacing: 0.01em; padding-left: 2px; padding-right: 2px; }
+            #btn-next, #btn-prev { padding-left: 10px; padding-right: 10px; }
+            .item-title { font-size: 10.5px; }
         }
-        .smoke-anim { animation: smokeRise 3.5s infinite ease-out; }
-
-        .liquid-transition {
-            transition: fill 0.6s ease, stop-color 0.6s ease, d 0.5s ease;
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                scroll-behavior: auto !important;
+                transition-duration: 0.01ms !important;
+            }
         }
-
-        /* Hide scrollbar for clean mobile look */
-        ::-webkit-scrollbar { width: 5px; height: 5px; }
-        ::-webkit-scrollbar-track { background: #0a0f1d; }
-        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
     </style>
-</head>
-<body class="min-h-screen flex flex-col justify-between pb-24 md:pb-12">
-
-    <!-- Top Navigation / Header -->
-    <header class="sticky top-0 z-30 glass-card border-b border-white/10 px-4 py-3.5">
-        <div class="max-w-5xl mx-auto flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-                <div class="w-9 h-9 rounded-full bg-wine-700/40 border border-wine-500/50 flex items-center justify-center text-gold-300 font-serif font-bold text-xl tracking-wider shadow-inner">
-                    G
-                </div>
-                <div>
-                    <h1 class="font-serif text-xl sm:text-2xl tracking-[0.18em] font-semibold text-white leading-none">
-                        ГОРЬКИЙ
-                    </h1>
-                    <p class="text-[10px] tracking-[0.25em] text-slate-400 uppercase mt-0.5">
-                        Gastrobar • Алхимия вкуса
-                    </p>
-                </div>
-            </div>
-
-            <button onclick="chefLuckyMix()" class="group relative inline-flex items-center gap-2 px-3.5 py-2 rounded-full text-xs font-medium bg-gradient-to-r from-wine-800 to-wine-600 text-white border border-wine-400/30 shadow-lg shadow-wine-900/40 hover:from-wine-700 hover:to-wine-500 active:scale-95 transition-all">
-                <i data-lucide="sparkles" class="w-3.5 h-3.5 text-gold-300 transition-transform group-hover:rotate-12"></i>
-                <span>Мне повезет</span>
-            </button>
-        </div>
-    </header>
-
-    <!-- Main Container -->
-    <main class="max-w-5xl w-full mx-auto px-4 pt-5 flex-grow grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-
-        <!-- Left / Top Sticky Visualizer Card -->
-        <div class="lg:col-span-5 lg:sticky lg:top-20 z-20">
-            <div class="glass-card rounded-3xl p-5 relative overflow-hidden border border-white/10">
-                <!-- Ambient glow behind glass -->
-                <div id="ambient-glow" class="absolute -top-12 left-1/2 -translate-x-1/2 w-56 h-56 rounded-full blur-3xl opacity-30 pointer-events-none transition-colors duration-700" style="background-color: #8b1e2f;"></div>
-
-                <div class="flex items-center justify-between mb-2 relative z-10">
-                    <span class="text-[11px] uppercase tracking-widest text-slate-400 font-medium flex items-center gap-1.5">
-                        <span class="w-2 h-2 rounded-full bg-wine-500 animate-pulse"></span>
-                        Ваш авторский микс
-                    </span>
-                    <span id="abv-badge" class="text-[11px] px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 text-slate-300">
-                        ~14% ABV
-                    </span>
-                </div>
-
-                <!-- Dynamic SVG Cocktail Visualizer -->
-                <div class="relative h-56 sm:h-64 flex items-center justify-center my-1">
-                    <svg id="cocktail-svg" viewBox="0 0 240 260" class="w-full h-full max-h-60 drop-shadow-[0_12px_25px_rgba(0,0,0,0.6)]">
-                        <defs>
-                            <!-- Dynamic Liquid Gradient -->
-                            <linearGradient id="liquidGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                                <stop id="grad-stop-1" offset="0%" stop-color="#e11d48" stop-opacity="0.85" class="liquid-transition" />
-                                <stop id="grad-stop-2" offset="100%" stop-color="#4c0519" stop-opacity="0.95" class="liquid-transition" />
-                            </linearGradient>
-
-                            <!-- Glass Reflection Gradient -->
-                            <linearGradient id="glassReflect" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.35" />
-                                <stop offset="30%" stop-color="#ffffff" stop-opacity="0.05" />
-                                <stop offset="100%" stop-color="#ffffff" stop-opacity="0.15" />
-                            </linearGradient>
-
-                            <!-- Clip paths for each glass type -->
-                            <clipPath id="clip-rocks">
-                                <path d="M58,85 L182,85 L172,215 C171,222 165,226 158,226 L82,226 C75,226 69,222 68,215 Z" />
-                            </clipPath>
-                            <clipPath id="clip-collins">
-                                <path d="M74,45 L166,45 L160,224 C159,228 155,230 150,230 L90,230 C85,230 81,228 80,224 Z" />
-                            </clipPath>
-                            <clipPath id="clip-coupe">
-                                <path d="M45,65 L195,65 C190,118 155,142 120,142 C85,142 50,118 45,65 Z" />
-                            </clipPath>
-                            <clipPath id="clip-wine">
-                                <path d="M68,48 L172,48 C184,112 162,152 120,152 C78,152 56,112 68,48 Z" />
-                            </clipPath>
-                        </defs>
-
-                        <!-- Dynamic Group Rendered by JS -->
-                        <g id="svg-scene"></g>
-                    </svg>
-                </div>
-
-                <!-- Live Title & Summary inside visualizer -->
-                <div class="text-center relative z-10 border-t border-white/10 pt-3">
-                    <h2 id="live-cocktail-name" class="font-serif italic text-2xl sm:text-3xl text-white tracking-wide">
-                        «Бархатный Вечер»
-                    </h2>
-                    <p id="live-cocktail-summary" class="text-xs text-slate-300 mt-1 line-clamp-2 leading-relaxed">
-                        Джин • Малина, Тоник • В бокале Рокс
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Right / Bottom Interactive Step-by-Step Builder -->
-        <div class="lg:col-span-7 flex flex-col gap-5">
-
-            <!-- Progress Stepper Navigation -->
-            <div class="glass-card rounded-2xl p-2 flex items-center justify-between gap-1 overflow-x-auto">
-                <button onclick="goToStep(1)" id="tab-step-1" class="step-tab flex-1 py-2 px-2.5 rounded-xl text-xs font-medium transition-all flex items-center justify-center gap-1.5 bg-wine-700 text-white shadow">
-                    <span class="w-5 h-5 rounded-full bg-black/30 flex items-center justify-center text-[11px]">1</span>
-                    <span class="hidden sm:inline">Основа</span>
-                </button>
-                <button onclick="goToStep(2)" id="tab-step-2" class="step-tab flex-1 py-2 px-2.5 rounded-xl text-xs font-medium text-slate-400 hover:text-white transition-all flex items-center justify-center gap-1.5">
-                    <span class="w-5 h-5 rounded-full bg-white/5 flex items-center justify-center text-[11px]">2</span>
-                    <span class="hidden sm:inline">Баланс</span>
-                </button>
-                <button onclick="goToStep(3)" id="tab-step-3" class="step-tab flex-1 py-2 px-2.5 rounded-xl text-xs font-medium text-slate-400 hover:text-white transition-all flex items-center justify-center gap-1.5">
-                    <span class="w-5 h-5 rounded-full bg-white/5 flex items-center justify-center text-[11px]">3</span>
-                    <span class="hidden sm:inline">Акценты</span>
-                </button>
-                <button onclick="goToStep(4)" id="tab-step-4" class="step-tab flex-1 py-2 px-2.5 rounded-xl text-xs font-medium text-slate-400 hover:text-white transition-all flex items-center justify-center gap-1.5">
-                    <span class="w-5 h-5 rounded-full bg-white/5 flex items-center justify-center text-[11px]">4</span>
-                    <span class="hidden sm:inline">Бокал</span>
-                </button>
-                <button onclick="goToStep(5)" id="tab-step-5" class="step-tab flex-1 py-2 px-2.5 rounded-xl text-xs font-medium text-slate-400 hover:text-white transition-all flex items-center justify-center gap-1.5">
-                    <span class="w-5 h-5 rounded-full bg-white/5 flex items-center justify-center text-[11px]">5</span>
-                    <span class="hidden sm:inline">Финал</span>
-                </button>
-            </div>
-
-            <!-- STEP 1: BASE SPIRIT -->
-            <section id="step-1" class="step-panel glass-card rounded-3xl p-5 sm:p-6">
-                <div class="mb-4">
-                    <span class="text-xs uppercase tracking-widest text-wine-400 font-semibold">Шаг 1 из 5</span>
-                    <h3 class="font-serif text-2xl sm:text-3xl text-white mt-0.5">Выберите основу коктейля</h3>
-                    <p class="text-xs text-slate-400 mt-1">Благородный крепкий алкоголь или безалкогольные дистилляты</p>
-                </div>
-
-                <div id="base-options-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <!-- Populated via JS -->
-                </div>
-            </section>
-
-            <!-- STEP 2: CHARACTER & BALANCE -->
-            <section id="step-2" class="step-panel glass-card rounded-3xl p-5 sm:p-6 hidden">
-                <div class="mb-5">
-                    <span class="text-xs uppercase tracking-widest text-wine-400 font-semibold">Шаг 2 из 5</span>
-                    <h3 class="font-serif text-2xl sm:text-3xl text-white mt-0.5">Характер и баланс</h3>
-                    <p class="text-xs text-slate-400 mt-1">Настройте кисло-сладкий профиль и интенсивность напитка</p>
-                </div>
-
-                <!-- Quick Presets -->
-                <div class="mb-6">
-                    <label class="text-xs text-slate-400 block mb-2.5">Быстрый выбор настроения:</label>
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                        <button onclick="setBalancePreset(15, 25)" class="glass-item rounded-xl p-2.5 text-xs text-center hover:border-wine-500 transition">
-                            🍋 Кисло-сухой
-                        </button>
-                        <button onclick="setBalancePreset(50, 30)" class="glass-item rounded-xl p-2.5 text-xs text-center hover:border-wine-500 transition">
-                            🌿 Свежий баланс
-                        </button>
-                        <button onclick="setBalancePreset(85, 45)" class="glass-item rounded-xl p-2.5 text-xs text-center hover:border-wine-500 transition">
-                            🍓 Ягодно-сладкий
-                        </button>
-                        <button onclick="setBalancePreset(35, 85)" class="glass-item rounded-xl p-2.5 text-xs text-center hover:border-wine-500 transition">
-                            🥃 Крепкий пряный
-                        </button>
-                    </div>
-                </div>
-
-                <div class="space-y-7 bg-navy-950/50 p-4 sm:p-5 rounded-2xl border border-white/5">
-                    <!-- Slider 1: Sweetness -->
-                    <div>
-                        <div class="flex justify-between text-xs font-medium mb-2">
-                            <span class="text-slate-300">Сухой / С горчинкой</span>
-                            <span id="sweetness-label" class="text-wine-400 font-semibold">Идеальный баланс</span>
-                            <span class="text-slate-300">Сладкий / Насыщенный</span>
-                        </div>
-                        <input id="slider-sweetness" type="range" min="0" max="100" value="50" oninput="updateBalance()">
-                    </div>
-
-                    <!-- Slider 2: Character -->
-                    <div>
-                        <div class="flex justify-between text-xs font-medium mb-2">
-                            <span class="text-slate-300">Освежающий цитрус</span>
-                            <span id="character-label" class="text-wine-400 font-semibold">Умеренно яркий</span>
-                            <span class="text-slate-300">Крепкий и пряный</span>
-                        </div>
-                        <input id="slider-character" type="range" min="0" max="100" value="40" oninput="updateBalance()">
-                    </div>
-                </div>
-            </section>
-
-            <!-- STEP 3: ACCENTS & MIXERS -->
-            <section id="step-3" class="step-panel glass-card rounded-3xl p-5 sm:p-6 hidden">
-                <div class="flex items-start justify-between mb-4">
-                    <div>
-                        <span class="text-xs uppercase tracking-widest text-wine-400 font-semibold">Шаг 3 из 5</span>
-                        <h3 class="font-serif text-2xl sm:text-3xl text-white mt-0.5">Вкусовые акценты и миксеры</h3>
-                        <p class="text-xs text-slate-400 mt-1">Выберите <strong class="text-white">до 3 ингредиентов</strong>, которые зададут цвет и вкус</p>
-                    </div>
-                    <span id="accents-counter" class="px-3 py-1 rounded-full text-xs font-semibold bg-wine-900/60 border border-wine-500/40 text-wine-300">
-                        2 / 3
-                    </span>
-                </div>
-
-                <div id="accents-options-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-                    <!-- Populated via JS -->
-                </div>
-            </section>
-
-            <!-- STEP 4: GLASSWARE -->
-            <section id="step-4" class="step-panel glass-card rounded-3xl p-5 sm:p-6 hidden">
-                <div class="mb-4">
-                    <span class="text-xs uppercase tracking-widest text-wine-400 font-semibold">Шаг 4 из 5</span>
-                    <h3 class="font-serif text-2xl sm:text-3xl text-white mt-0.5">Подача и бокал</h3>
-                    <p class="text-xs text-slate-400 mt-1">Форма бокала определяет температуру и раскрытие аромата</p>
-                </div>
-
-                <div id="glass-options-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <!-- Populated via JS -->
-                </div>
-            </section>
-
-            <!-- STEP 5: GARNISH & GUEST INFO -->
-            <section id="step-5" class="step-panel glass-card rounded-3xl p-5 sm:p-6 hidden">
-                <div class="mb-4">
-                    <span class="text-xs uppercase tracking-widest text-wine-400 font-semibold">Шаг 5 из 5</span>
-                    <h3 class="font-serif text-2xl sm:text-3xl text-white mt-0.5">Финальный штрих</h3>
-                    <p class="text-xs text-slate-400 mt-1">Выберите украшение для подачи и укажите столик</p>
-                </div>
-
-                <div id="garnish-options-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-6">
-                    <!-- Populated via JS -->
-                </div>
-
-                <!-- Guest & Table Details -->
-                <div class="border-t border-white/10 pt-5 space-y-4">
-                    <h4 class="font-serif text-xl text-white">Детали для бармена</h4>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div>
-                            <label class="block text-xs text-slate-400 mb-1.5">Ваше имя или № столика</label>
-                            <input id="guest-name" type="text" placeholder="Например: Стол №4, Алексей" class="w-full px-3.5 py-2.5 rounded-xl bg-navy-950/80 border border-white/10 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-wine-500 transition">
-                        </div>
-                        <div>
-                            <label class="block text-xs text-slate-400 mb-1.5">Пожелания к подаче</label>
-                            <input id="guest-notes" type="text" placeholder="Меньше льда / Подать с трубочкой" class="w-full px-3.5 py-2.5 rounded-xl bg-navy-950/80 border border-white/10 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-wine-500 transition">
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Stepper Footer Buttons -->
-            <div class="flex items-center justify-between gap-3 pt-1">
-                <button id="btn-prev" onclick="prevStep()" class="px-5 py-3.5 rounded-2xl glass-item text-xs sm:text-sm font-medium text-slate-300 hover:text-white flex items-center gap-2 disabled:opacity-30 disabled:pointer-events-none">
-                    <i data-lucide="arrow-left" class="w-4 h-4"></i>
-                    <span>Назад</span>
-                </button>
-
-                <button id="btn-next" onclick="nextStep()" class="flex-1 py-3.5 px-6 rounded-2xl bg-gradient-to-r from-wine-700 to-wine-600 hover:from-wine-600 hover:to-wine-500 text-white font-medium text-xs sm:text-sm shadow-lg shadow-wine-900/50 flex items-center justify-center gap-2 transition-all active:scale-98">
-                    <span id="btn-next-text">Далее: Характер и баланс</span>
-                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                </button>
-
-                <button id="btn-finish" onclick="openOrderModal()" class="hidden flex-1 py-3.5 px-6 rounded-2xl bg-gradient-to-r from-wine-600 via-wine-500 to-amber-700 text-white font-semibold text-sm shadow-xl shadow-wine-900/60 flex items-center justify-center gap-2 transition-all active:scale-95">
-                    <i data-lucide="martini" class="w-4 h-4"></i>
-                    <span>Создать коктейль</span>
-                </button>
-            </div>
-
-        </div>
-    </main>
-
-    <!-- ORDER CARD MODAL (FOR BARTENDER / WAITER) -->
-    <div id="order-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4 overflow-y-auto">
-        <div id="order-card-container" class="glass-card border border-wine-500/40 rounded-3xl max-w-md w-full p-6 relative my-auto shadow-2xl transition-all">
-            
-            <!-- Close button -->
-            <button onclick="closeOrderModal()" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-slate-300">
-                <i data-lucide="x" class="w-5 h-5"></i>
-            </button>
-
-            <div class="text-center border-b border-white/10 pb-4">
-                <span class="text-[10px] uppercase tracking-[0.3em] text-gold-300 block">GORKIY GASTROBAR • ЗАКАЗ БАРМЕНУ</span>
-                <h2 id="modal-cocktail-title" class="font-serif italic text-3xl sm:text-4xl text-white mt-1">
-                    «Бархатный Вечер»
-                </h2>
-                <p id="modal-guest-badge" class="text-xs text-wine-400 font-medium mt-1"></p>
-            </div>
-
-            <!-- Large Readable Recipe List for Waiter/Bartender -->
-            <div class="py-5 space-y-4 text-sm" id="modal-recipe-content">
-                <div class="flex justify-between items-start border-b border-white/5 pb-3">
-                    <span class="text-slate-400 text-xs uppercase tracking-wider">1. Основа:</span>
-                    <span id="modal-base" class="font-semibold text-white text-right text-base">Джин (50 мл)</span>
-                </div>
-                <div class="flex justify-between items-start border-b border-white/5 pb-3">
-                    <span class="text-slate-400 text-xs uppercase tracking-wider">2. Баланс:</span>
-                    <span id="modal-balance" class="font-medium text-slate-200 text-right">Идеальный баланс • Свежий</span>
-                </div>
-                <div class="flex justify-between items-start border-b border-white/5 pb-3">
-                    <span class="text-slate-400 text-xs uppercase tracking-wider">3. Акценты:</span>
-                    <span id="modal-accents" class="font-semibold text-wine-300 text-right text-base">Малина, Тоник</span>
-                </div>
-                <div class="flex justify-between items-start border-b border-white/5 pb-3">
-                    <span class="text-slate-400 text-xs uppercase tracking-wider">4. Подача:</span>
-                    <span id="modal-glass" class="font-medium text-white text-right">Рокс (на кубе льда)</span>
-                </div>
-                <div class="flex justify-between items-start border-b border-white/5 pb-3">
-                    <span class="text-slate-400 text-xs uppercase tracking-wider">5. Гарнир:</span>
-                    <span id="modal-garnish" class="font-medium text-gold-300 text-right">Веточка розмарина с дымком</span>
-                </div>
-                <div id="modal-notes-row" class="bg-white/5 rounded-xl p-3 hidden">
-                    <span class="text-[11px] uppercase tracking-wider text-slate-400 block">Пожелание гостя:</span>
-                    <p id="modal-notes" class="text-white font-medium mt-0.5"></p>
-                </div>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="space-y-2.5 pt-2">
-                <button onclick="toggleWaiterFullscreen()" id="btn-waiter-mode" class="w-full py-3.5 px-4 rounded-2xl bg-wine-700 hover:bg-wine-600 text-white font-semibold text-sm flex items-center justify-center gap-2 shadow-lg shadow-wine-950">
-                    <i data-lucide="maximize-2" class="w-4 h-4"></i>
-                    <span>Показать экран официанту (Крупно)</span>
-                </button>
-
-                <button onclick="copyRecipeText()" class="w-full py-3 px-4 rounded-2xl glass-item hover:bg-white/10 text-slate-200 font-medium text-xs sm:text-sm flex items-center justify-center gap-2">
-                    <i data-lucide="copy" class="w-4 h-4 text-gold-300"></i>
-                    <span>Скопировать рецепт для Telegram</span>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Notification Toast -->
-    <div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-full bg-emerald-900/95 border border-emerald-500/40 text-white text-xs font-medium shadow-2xl flex items-center gap-2 opacity-0 pointer-events-none transition-opacity duration-300">
-        <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>
-        <span id="toast-text">Рецепт скопирован в буфер обмена!</span>
-    </div>
-
+  </head>
+  <body class="h-[100dvh] w-full overflow-hidden flex flex-col justify-between px-3 py-1.5 max-w-md mx-auto">
     <script>
-        // --- DATA CATALOG ---
-        const BASES = [
-            { id: 'gin', name: 'Сухой Джин', desc: 'Можжевельник, цитрусовые и пряные ботаникалы', abv: 16, color1: '#e2e8f0', color2: '#94a3b8', icon: '🍸', poeticAdj: 'Ботанический' },
-            { id: 'rum', name: 'Пряный / Светлый Ром', desc: 'Тропические ноты, ваниль и карамель', abv: 16, color1: '#f59e0b', color2: '#92400e', icon: '🥃', poeticAdj: 'Карибский' },
-            { id: 'vodka', name: 'Крафтовая Водка', desc: 'Чистый и кристальный профиль для ярких миксов', abv: 15, color1: '#f8fafc', color2: '#cbd5e1', icon: '❄️', poeticAdj: 'Кристальный' },
-            { id: 'tequila', name: 'Текила 100% Агава', desc: 'Землисто-свежий характер голубой агавы', abv: 17, color1: '#fde047', color2: '#ca8a04', icon: '🌵', poeticAdj: 'Мексиканский' },
-            { id: 'bourbon', name: 'Выдержанный Бурбон', desc: 'Дубовая бочка, дымная карамель и шоколад', abv: 19, color1: '#d97706', color2: '#78350f', icon: '🔥', poeticAdj: 'Полуночный' },
-            { id: 'sparkling', name: 'Игристое Вино (Брют)', desc: 'Легкие пузырьки, белые цветы и персик', abv: 10, color1: '#fef08a', color2: '#eab308', icon: '🥂', poeticAdj: 'Игристый' },
-            { id: 'non_alc', name: 'Безалкогольная база', desc: 'Дистиллят из трав, цитрусов и специй (0% ABV)', abv: 0, color1: '#a7f3d0', color2: '#059669', icon: '🌿', poeticAdj: 'Невесомый' }
-        ];
-
-        const ACCENTS = [
-            { id: 'raspberry', name: 'Малина', category: 'Ягода', color1: '#f43f5e', color2: '#881337', icon: '🍓', poeticNoun: 'Рубин' },
-            { id: 'passionfruit', name: 'Маракуйя', category: 'Экзотика', color1: '#fbbf24', color2: '#d97706', icon: '🥭', poeticNoun: 'Тропик' },
-            { id: 'elderflower', name: 'Цветы бузины', category: 'Флора', color1: '#fef9c3', color2: '#ca8a04', icon: '🌼', poeticNoun: 'Нектар' },
-            { id: 'basil', name: 'Свежий базилик', category: 'Травы', color1: '#4ade80', color2: '#14532d', icon: '🌿', poeticNoun: 'Изумруд' },
-            { id: 'rosemary', name: 'Розмарин', category: 'Травы', color1: '#86efac', color2: '#166534', icon: '🌲', poeticNoun: 'Туман' },
-            { id: 'cucumber', name: 'Огурец', category: 'Свежесть', color1: '#6ee7b7', color2: '#065f46', icon: '🥒', poeticNoun: 'Оазис' },
-            { id: 'ginger_ale', name: 'Имбирный эль', category: 'Миксер', color1: '#fb923c', color2: '#9a3412', icon: '🫚', bubbles: true, poeticNoun: 'Огонь' },
-            { id: 'tonic', name: 'Индийский тоник', category: 'Миксер', color1: '#cbd5e1', color2: '#475569', icon: '🫧', bubbles: true, poeticNoun: 'Бриз' },
-            { id: 'grapefruit', name: 'Грейпфрут фреш', category: 'Цитрус', color1: '#fb7185', color2: '#be123c', icon: '🍊', poeticNoun: 'Закат' },
-            { id: 'soda', name: 'Крафтовая содовая', category: 'Миксер', color1: '#e2e8f0', color2: '#64748b', icon: '💧', bubbles: true, poeticNoun: 'Мираж' }
-        ];
-
-        const GLASSES = [
-            { id: 'rocks', name: 'Рокс (Олд Фэшн)', desc: 'Подается на большом кристальном кубе льда', badge: 'Классика' },
-            { id: 'collins', name: 'Коллинз (Хайбол)', desc: 'Высокий бокал с колотым льдом для долгих бесед', badge: 'Освежающий' },
-            { id: 'coupe', name: 'Коктейльная рюмка Купе', desc: 'Элегантная подача на тонкой ножке без льда', badge: 'Эстетика' },
-            { id: 'wine', name: 'Винный бокал', desc: 'Идеален для спритцей, ягод и раскрытия ароматики', badge: 'Аромат' }
-        ];
-
-        const GARNISHES = [
-            { id: 'orange_peel', name: 'Цедра красного апельсина', desc: 'Эфирные масла цитруса поверх бокала', icon: '🍊' },
-            { id: 'smoked_rosemary', name: 'Розмарин с дымком', desc: 'Обожженная веточка с ароматом костра', icon: '🔥' },
-            { id: 'freeze_raspberry', name: 'Сублимированная малина', desc: 'Ягодная пудра на пенке или краю бокала', icon: '🍓' },
-            { id: 'olives', name: 'Сицилийские оливки на шпажке', desc: 'Гастрономический акцент для сухих коктейлей', icon: '🫒' },
-            { id: 'lime', name: 'Дегидрированный лайм', desc: 'Хрустящий слайс ароматного лайма', icon: '🍋‍🟩' }
-        ];
-
-        // --- APPLICATION STATE ---
-        let state = {
-            currentStep: 1,
-            base: 'gin',
-            sweetness: 50,
-            character: 35,
-            accents: ['raspberry', 'tonic'],
-            glass: 'rocks',
-            garnish: 'smoked_rosemary',
-            waiterFullscreen: false
+        // Коэффициенты для ценообразования пропорционально бокалу.
+        // За базу берётся Рокс (250 мл) с коэффициентом 1.0.
+        const VOLUME_MULTIPLIERS = {
+            'rocks': 1.0,      // 250 мл (База: 50 мл алкоголя + 20 мл сироп + 120 мл миксер + лёд = ~250 мл)
+            'coupe': 0.8,      // 150 мл (Чистый напиток, меньше миксера, концентрированный вкус)
+            'highball': 1.3,   // 350 мл (Больше объёма = пропорционально больше льда и миксера, чуть больше базы)
+            'goblet': 1.5      // 450 мл (Спритцы. Много льда, увеличенная порция вина и миксера)
         };
 
-        // --- INITIALIZATION ---
-        window.onload = function() {
-            renderAllOptions();
-            updateUI();
-            lucide.createIcons();
-        };
-
-        // --- RENDER FUNCTIONS ---
-        function renderAllOptions() {
-            // 1. Render Bases
-            const baseGrid = document.getElementById('base-options-grid');
-            baseGrid.innerHTML = BASES.map(b => `
-                <div onclick="selectBase('${b.id}')" class="glass-item rounded-2xl p-3.5 cursor-pointer flex items-start gap-3.5 ${state.base === b.id ? 'selected' : ''}">
-                    <div class="w-11 h-11 rounded-xl bg-white/5 flex items-center justify-center text-2xl shrink-0">
-                        ${b.icon}
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <div class="flex items-center justify-between gap-2">
-                            <h4 class="font-medium text-sm text-white truncate">${b.name}</h4>
-                            ${b.abv === 0 ? '<span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">0%</span>' : ''}
-                        </div>
-                        <p class="text-xs text-slate-400 mt-0.5 leading-snug">${b.desc}</p>
-                    </div>
-                </div>
-            `).join('');
-
-            // 3. Render Accents
-            const accentsGrid = document.getElementById('accents-options-grid');
-            accentsGrid.innerHTML = ACCENTS.map(a => {
-                const isSelected = state.accents.includes(a.id);
-                return `
-                <div onclick="toggleAccent('${a.id}')" class="glass-item rounded-2xl p-3 cursor-pointer flex flex-col justify-between ${isSelected ? 'selected' : ''}">
-                    <div class="flex items-center justify-between mb-1.5">
-                        <span class="text-xl">${a.icon}</span>
-                        <span class="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/5 text-slate-400">${a.category}</span>
-                    </div>
-                    <p class="font-medium text-xs sm:text-sm text-white">${a.name}</p>
-                </div>
-                `;
-            }).join('');
-            document.getElementById('accents-counter').textContent = `${state.accents.length} / 3`;
-
-            // 4. Render Glasses
-            const glassGrid = document.getElementById('glass-options-grid');
-            glassGrid.innerHTML = GLASSES.map(g => `
-                <div onclick="selectGlass('${g.id}')" class="glass-item rounded-2xl p-4 cursor-pointer flex flex-col justify-between ${state.glass === g.id ? 'selected' : ''}">
-                    <div class="flex items-center justify-between mb-1">
-                        <h4 class="font-serif text-xl text-white font-semibold">${g.name}</h4>
-                        <span class="text-[10px] px-2.5 py-0.5 rounded-full bg-wine-900/60 text-wine-300 border border-wine-500/30">${g.badge}</span>
-                    </div>
-                    <p class="text-xs text-slate-400 leading-relaxed">${g.desc}</p>
-                </div>
-            `).join('');
-
-            // 5. Render Garnishes
-            const garnishGrid = document.getElementById('garnish-options-grid');
-            garnishGrid.innerHTML = GARNISHES.map(g => `
-                <div onclick="selectGarnish('${g.id}')" class="glass-item rounded-2xl p-3.5 cursor-pointer flex items-center gap-3 ${state.garnish === g.id ? 'selected' : ''}">
-                    <div class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-xl shrink-0">
-                        ${g.icon}
-                    </div>
-                    <div>
-                        <h4 class="font-medium text-xs sm:text-sm text-white">${g.name}</h4>
-                        <p class="text-[11px] text-slate-400 mt-0.5">${g.desc}</p>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // --- INTERACTION HANDLERS ---
-        function selectBase(id) {
-            state.base = id;
-            renderAllOptions();
-            updateUI();
-        }
-
-        function setBalancePreset(sweet, char) {
-            state.sweetness = sweet;
-            state.character = char;
-            document.getElementById('slider-sweetness').value = sweet;
-            document.getElementById('slider-character').value = char;
-            updateBalance();
-        }
-
-        function updateBalance() {
-            state.sweetness = parseInt(document.getElementById('slider-sweetness').value);
-            state.character = parseInt(document.getElementById('slider-character').value);
-
-            const sLabel = document.getElementById('sweetness-label');
-            if (state.sweetness < 30) sLabel.textContent = 'Сухой с благородной горчинкой';
-            else if (state.sweetness <= 65) sLabel.textContent = 'Идеальный кисло-сладкий баланс';
-            else sLabel.textContent = 'Сладкий и бархатистый';
-
-            const cLabel = document.getElementById('character-label');
-            if (state.character < 35) cLabel.textContent = 'Легкий освежающий цитрус';
-            else if (state.character <= 70) cLabel.textContent = 'Умеренно яркий характер';
-            else cLabel.textContent = 'Крепкий, согревающий и пряный';
-
-            updateUI();
-        }
-
-        function toggleAccent(id) {
-            const idx = state.accents.indexOf(id);
-            if (idx > -1) {
-                if (state.accents.length > 1) {
-                    state.accents.splice(idx, 1);
-                } else {
-                    showToast('Выберите хотя бы 1 вкусовой акцент');
+        const BAR_MENU_CONFIG = {
+            glasses: [
+                { id: 'rocks', name: 'Рокс', sub: 'Низкий стакан с массивным дном', tag: 'Крепкая подача', volume: '250 мл' },
+                { id: 'highball', name: 'Хайбол', sub: 'Высокий бокал для лонг-дринков', tag: 'Лонг-дринк', volume: '350 мл' },
+                { id: 'coupe', name: 'Шале (Купе)', sub: 'Широкая чаша на тонкой ножке', tag: 'Элегантная классика', volume: '150 мл' },
+                { id: 'goblet', name: 'Винный бокал', sub: 'Объёмная чаша для спритцей', tag: 'Игристая подача', volume: '450 мл' }
+            ],
+            bases: [
+                { id: 'gin', name: 'Джин Tanqueray', sub: 'Великобритания • Сухой', vol: '50 мл', price: 13, color: '#5B8FB9' },
+                { id: 'rum', name: 'Ром Captain Morgan', sub: 'Великобритания • Тёмный', vol: '50 мл', price: 11, color: '#B45309' },
+                { id: 'whiskey', name: 'Виски Jim Beam', sub: 'США • Бурбон', vol: '50 мл', price: 8, color: '#D97706' },
+                { id: 'vodka', name: 'Водка Danzka', sub: 'Дания • Классическая', vol: '50 мл', price: 8.5, color: '#94A3B8' },
+                { id: 'tequila', name: 'Текила Sierra', sub: 'Мексика • Светлая', vol: '50 мл', price: 11, color: '#EAB308' },
+                { id: 'aperol', name: 'Ликёр Aperol', sub: 'Италия • Апельсин и травы', vol: '50 мл', price: 6.5, color: '#EA580C' },
+                { id: 'liqueur', name: 'Ликёр Fruko Schulz', sub: 'Чехия • Дыня / персик', vol: '50 мл', price: 10, color: '#38A169' },
+                { id: 'prosecco', name: 'Игристое вино Prosecco', sub: 'Италия • Сухой брют', vol: '100 мл', price: 9, color: '#E2C775' }
+            ],
+            syrups: [
+                { id: 'passion', name: 'Сироп Спелая Маракуйя', sub: 'Тропическая кислинка', vol: '20 мл', price: 2, color: '#D97706' },
+                { id: 'berry', name: 'Сироп Лесная Ежевика', sub: 'Глубокий ягодный бархат', vol: '20 мл', price: 2, color: '#881337' },
+                { id: 'elder', name: 'Сироп Цветы Бузины', sub: 'Тонкий мускатный аромат', vol: '20 мл', price: 2.5, color: '#D6C58A' },
+                { id: 'lavender', name: 'Сироп Прованская Лаванда', sub: 'Цветочный пряный шлейф', vol: '20 мл', price: 2, color: '#8B5CF6' },
+                { id: 'salted_caramel', name: 'Сироп Солёная Карамель', sub: 'Сливочно-ирисовый тон', vol: '20 мл', price: 2, color: '#9A3412' },
+                { id: 'coconut', name: 'Сироп Сливочный Кокос', sub: 'Мягкая тропическая нежность', vol: '20 мл', price: 2.5, color: '#CBD5E1' }
+            ],
+            mixers: [
+                { id: 'tonic', name: 'Напиток Индийский Тоник', sub: 'Благородная горчинка', vol: '120 мл', price: 2.5, color: '#7DD3FC', fizzy: true },
+                { id: 'prosecco', name: 'Игристое вино Prosecco', sub: 'Сухие игристые пузырьки', vol: '100 мл', price: 5, color: '#E2C775', fizzy: true },
+                { id: 'soda', name: 'Вода Крафтовая Содовая', sub: 'Чистая свежая газация', vol: '120 мл', price: 2, color: '#CBD5E1', fizzy: true },
+                { id: 'grapefruit', name: 'Сок Розовый Грейпфрут', sub: 'Цитрус с горчинкой', vol: '120 мл', price: 3, color: '#E11D48', fizzy: false },
+                { id: 'pineapple', name: 'Сок Сочный Ананас', sub: 'Мягкий тропический нектар', vol: '120 мл', price: 3, color: '#CA8A04', fizzy: false },
+                { id: 'espresso', name: 'Кофе Шот Эспрессо', sub: 'Крепкая тёмная арабика', vol: '40 мл', price: 2.5, color: '#451A03', fizzy: false }
+            ],
+            garnishes: [
+                { id: 'orange', name: 'Чипс апельсина', sub: 'Ароматная красная цедра', price: 1.5, badge: '🍊' },
+                { id: 'rosemary', name: 'Дымный розмарин', sub: 'Пряная свежая веточка', price: 1.5, badge: '🌿' },
+                { id: 'mint', name: 'Свежая мята', sub: 'Прохладный зелёный лист', price: 1, badge: '🍃' },
+                { id: 'berries', name: 'Ежевика на шпажке', sub: 'Сочная лесная ягода', price: 1.5, badge: '🫐' },
+                { id: 'bartender', name: 'Выбор бармена', sub: 'Доверьте финальный штрих профи', price: 0, badge: '✨' }
+            ],
+            magicRecipes: [
+                {
+                    title: 'Микс: Джин & Бузина',
+                    glass: 'goblet', base: 'gin', syrup: 'elder', mixer: 'prosecco', garnish: 'rosemary',
+                    comment: 'Идеальное сочетание. Компоненты гармонично дополняют друг друга.'
+                },
+                {
+                    title: 'Микс: Ром & Кокос',
+                    glass: 'highball', base: 'rum', syrup: 'coconut', mixer: 'pineapple', garnish: 'mint',
+                    comment: 'Идеальное сочетание. Тропическая классика в лучшем исполнении.'
+                },
+                {
+                    title: 'Микс: Виски & Карамель',
+                    glass: 'rocks', base: 'whiskey', syrup: 'salted_caramel', mixer: 'soda', garnish: 'orange',
+                    comment: 'Отличный баланс. Мягкая содовая раскрывает карамельные ноты виски.'
+                },
+                {
+                    title: 'Микс: Текила & Маракуйя',
+                    glass: 'highball', base: 'tequila', syrup: 'passion', mixer: 'grapefruit', garnish: 'orange',
+                    comment: 'Идеальное сочетание. Яркий мексиканский микс с терпким грейпфрутом.'
                 }
-            } else {
-                if (state.accents.length < 3) {
-                    state.accents.push(id);
+            ]
+        };
+    </script>
+    <!-- ШАПКА -->
+    <header class="flex items-center justify-between flex-shrink-0 pb-1 px-0.5">
+      <div>
+        <h1 class="font-serif text-xl font-bold tracking-[0.14em] text-ivory leading-none">ГОРЬКИЙ</h1>
+        <p class="text-[8.5px] uppercase tracking-[0.22em] text-gold font-semibold mt-0.5">Гастробар • Магия вкуса</p>
+      </div>
+      <button type="button" onclick="applyFlavorMagic()" class="glass-stage hover:border-gold/60 active:scale-95 text-ivory text-[10.5px] font-semibold px-3 py-1.5 rounded-xl transition flex items-center space-x-1.5">
+        <i data-lucide="sparkles" class="w-3.5 h-3.5 text-gold">
+        </i>
+        <span>Создать магию вкуса</span>
+      </button>
+    </header>
+    <!-- ЭТАП 3 & 4: ОПТИМИЗИРОВАННЫЙ ВЕРХНИЙ БЛОК С РЕАЛИСТИЧНОЙ SVG-АНИМАЦИЕЙ НАЛИВАНИЯ -->
+    <section class="glass-stage rounded-2xl px-2.5 py-2 flex-shrink-0 relative overflow-hidden">
+      <div id="ambient-liquid-glow" class="w-32 h-32 rounded-full blur-3xl opacity-35 pointer-events-none absolute -top-6 left-2 transition-colors duration-700" style="background-color: #2B548E;">
+      </div>
+      <div class="grid grid-cols-12 items-center gap-2 relative z-10">
+        <!-- Визуализация бокала (Компактная, но выразительная: 112px высота) -->
+        <div class="col-span-4 flex flex-col items-center justify-center relative h-[112px]">
+          <div id="garnish-badge" class="absolute top-0.5 right-1 z-20 text-sm w-6 h-6 rounded-full glass-stage flex items-center justify-center transition-transform duration-300 transform scale-0">
+          </div>
+          <div id="hero-glass-wrapper" class="glass-float w-24 h-[110px] flex items-center justify-center">
+            <svg viewBox="0 0 120 150" class="w-full h-full overflow-visible drop-shadow-[0_10px_18px_rgba(0,0,0,0.65)]">
+              <defs>
+                <linearGradient id="drinkGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+                  <stop id="grad-bottom" offset="0%" stop-color="#8C1D35" />
+                  <stop id="grad-middle" offset="50%" stop-color="#1A365D" />
+                  <stop id="grad-top" offset="100%" stop-color="#488B6A" />
+                </linearGradient>
+                <!-- Градиент реалистичной струи с мягкими краями -->
+                <linearGradient id="streamGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop id="stream-stop-top" offset="0%" stop-color="#D4AF37" stop-opacity="0.15" />
+                  <stop id="stream-stop-mid" offset="45%" stop-color="#D4AF37" stop-opacity="0.92" />
+                  <stop id="stream-stop-bot" offset="100%" stop-color="#D4AF37" stop-opacity="0.98" />
+                </linearGradient>
+                <!-- Точные внутренние маски для каждого из 4 бокалов -->
+                <clipPath id="clip-rocks">
+                  <path d="M22 42 L98 42 L91 124 C90 131, 81 134, 60 134 C39 134, 30 131, 29 124 Z"/>
+                </clipPath>
+                <clipPath id="clip-highball">
+                  <path d="M29 20 L91 20 L86 130 C85 135, 76 137, 60 137 C44 137, 35 135, 34 130 Z"/>
+                </clipPath>
+                <clipPath id="clip-coupe">
+                  <path d="M16 32 L104 32 C99 74, 79 86, 60 86 C41 86, 21 74, 16 32 Z"/>
+                </clipPath>
+                <clipPath id="clip-goblet">
+                  <path d="M28 24 L92 24 C95 72, 79 94, 60 94 C41 94, 25 72, 28 24 Z"/>
+                </clipPath>
+              </defs>
+              <!-- Внутренняя область чаши бокала (Жидкость + Струя + Колебание поверхности + Лёд + Пузырьки) -->
+              <g id="glass-clip-target" clip-path="url(#clip-rocks)">
+                <!-- Жидкость с плавным мениском -->
+                <path id="liquid-surface" d="M10 105 Q40 101 65 105 T115 103 L115 145 L10 145 Z" fill="url(#drinkGrad)" fill-opacity="0.9" class="transition-all duration-500 ease-out"/>
+                <!-- Плавная сужающаяся струя жидкости внутри чаши -->
+                <path id="svg-pour-stream" d="M57.5 12 Q60 12 62.5 12 L61.1 105 Q60 107 58.9 105 Z" fill="url(#streamGrad)" opacity="0" class="transition-opacity duration-200 pointer-events-none"/>
+                <!-- Мягкая волна/круги на поверхности в точке падения струи -->
+                <ellipse id="pour-ripple" cx="60" cy="105" rx="15" ry="2.6" fill="#FFFFFF" fill-opacity="0.45" opacity="0" class="pointer-events-none"/>
+                <!-- Лёд -->
+                <g id="ice-cubes" class="ice-float" opacity="0.42">
+                  <rect x="34" y="76" width="19" height="19" rx="4" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+                  <rect x="58" y="66" width="20" height="20" rx="4" transform="rotate(18 58 66)" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+                </g>
+                <!-- Пузырьки газации -->
+                <g id="fizz-bubbles" class="hidden">
+                  <circle cx="44" cy="108" r="2" fill="#FFFFFF" class="bubble-anim"/>
+                  <circle cx="60" cy="116" r="2.4" fill="#FFFFFF" class="bubble-anim" style="animation-delay: 0.6s"/>
+                  <circle cx="72" cy="102" r="1.8" fill="#FFFFFF" class="bubble-anim" style="animation-delay: 1.2s"/>
+                </g>
+              </g>
+              <!-- Внешние контуры бокалов -->
+              <g id="outline-rocks">
+                <path d="M21 41 L99 41 L92 125 C91 133, 81 136, 60 136 C39 136, 29 133, 28 125 Z" stroke="#F5F1E8" stroke-width="2.6" stroke-opacity="0.85" fill="none" stroke-linejoin="round"/>
+                <path d="M29 122 L91 122" stroke="#D4AF37" stroke-width="3" stroke-opacity="0.35"/>
+                <path d="M27 50 L32 115" stroke="#FFFFFF" stroke-width="1.4" stroke-opacity="0.25" stroke-linecap="round"/>
+              </g>
+              <g id="outline-highball" class="hidden">
+                <path d="M28 19 L92 19 L87 131 C86 137, 76 139, 60 139 C44 139, 34 137, 33 131 Z" stroke="#F5F1E8" stroke-width="2.6" stroke-opacity="0.85" fill="none" stroke-linejoin="round"/>
+                <path d="M33 126 L87 126" stroke="#D4AF37" stroke-width="2.5" stroke-opacity="0.35"/>
+                <path d="M34 30 L38 118" stroke="#FFFFFF" stroke-width="1.4" stroke-opacity="0.25" stroke-linecap="round"/>
+              </g>
+              <g id="outline-coupe" class="hidden">
+                <ellipse cx="60" cy="32" rx="44" ry="4" stroke="#F5F1E8" stroke-width="2.2" stroke-opacity="0.85" fill="none"/>
+                <path d="M16 32 C21 75, 41 87, 60 87 C79 87, 99 75, 104 32" stroke="#F5F1E8" stroke-width="2.6" stroke-opacity="0.85" fill="none"/>
+                <line x1="60" y1="87" x2="60" y2="136" stroke="#F5F1E8" stroke-width="3" stroke-opacity="0.85" stroke-linecap="round"/>
+                <ellipse cx="60" cy="137" rx="22" ry="4" stroke="#D4AF37" stroke-width="2.2" fill="rgba(255,255,255,0.1)"/>
+              </g>
+              <g id="outline-goblet" class="hidden">
+                <ellipse cx="60" cy="24" rx="32" ry="4" stroke="#F5F1E8" stroke-width="2.2" stroke-opacity="0.85" fill="none"/>
+                <path d="M28 24 C25 73, 41 95, 60 95 C79 95, 95 73, 92 24" stroke="#F5F1E8" stroke-width="2.6" stroke-opacity="0.85" fill="none"/>
+                <line x1="60" y1="95" x2="60" y2="136" stroke="#F5F1E8" stroke-width="3" stroke-opacity="0.85" stroke-linecap="round"/>
+                <ellipse cx="60" cy="137" rx="21" ry="4" stroke="#D4AF37" stroke-width="2.2" fill="rgba(255,255,255,0.1)"/>
+              </g>
+            </svg>
+          </div>
+        </div>
+        <!-- Описание коктейля и статус гармонии -->
+        <div class="col-span-8 flex flex-col justify-between h-full py-0.5 min-w-0">
+          <div>
+            <div class="flex items-center justify-between gap-1">
+              <span id="harmony-badge" class="text-[8.5px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/10 text-ivory-muted">Шаг 1 • Бокал</span>
+            </div>
+            <h2 id="cocktail-title" class="font-serif text-lg font-bold text-ivory leading-tight mt-0.5 item-title">Ваш авторский микс</h2>
+            <p id="selected-recipe-line" class="text-[9.5px] text-gold font-medium mt-0.5 leading-snug">Бокал: Рокс (250 мл)</p>
+          </div>
+          <div id="advice-box" class="bg-black/30 border border-white/10 rounded-xl px-2.5 py-1.5 mt-1 transition-all">
+            <p id="advice-text" class="text-[10px] text-ivory/90 leading-snug">Выберите бокал, затем нажмите «Далее: Основа».</p>
+            <button type="button" id="fix-recipe-btn" onclick="fixIncompatibleMix()" class="hidden mt-1 w-full bg-gold/20 hover:bg-gold/30 border border-gold/50 text-gold text-[9.5px] font-semibold py-1 px-2 rounded-lg transition flex items-center justify-center space-x-1">
+              <i data-lucide="wand-2" class="w-3 h-3">
+              </i>
+              <span id="fix-recipe-label">Сбалансировать вкус</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- ОСНОВНАЯ РАБОЧАЯ ОБЛАСТЬ КОНСТРУКТОРА -->
+    <main class="flex-1 min-h-0 flex flex-col justify-between my-1.5">
+      <!-- Вкладки 5 шагов -->
+      <div class="grid grid-cols-5 gap-1 mb-1.5 flex-shrink-0">
+        <button type="button" onclick="goToStep(0)" id="step-pill-0" class="py-1.5 px-1 rounded-xl text-[9.5px] font-bold uppercase tracking-wider border transition text-center">1. Бокал</button>
+        <button type="button" onclick="goToStep(1)" id="step-pill-1" class="py-1.5 px-1 rounded-xl text-[9.5px] font-bold uppercase tracking-wider border transition text-center">2. Основа</button>
+        <button type="button" onclick="goToStep(2)" id="step-pill-2" class="py-1.5 px-1 rounded-xl text-[9.5px] font-bold uppercase tracking-wider border transition text-center">3. Сироп</button>
+        <button type="button" onclick="goToStep(3)" id="step-pill-3" class="py-1.5 px-1 rounded-xl text-[9.5px] font-bold uppercase tracking-wider border transition text-center">4. Микс</button>
+        <button type="button" onclick="goToStep(4)" id="step-pill-4" class="py-1.5 px-1 rounded-xl text-[9.5px] font-bold uppercase tracking-wider border transition text-center">5. Декор</button>
+      </div>
+      <!-- Карточка активного шага -->
+      <div class="glass-stage rounded-2xl p-2.5 flex-1 min-h-0 flex flex-col justify-between overflow-hidden">
+        <div class="flex items-center justify-between pb-1.5 mb-1.5 border-b border-white/10 flex-shrink-0 gap-2">
+          <div class="min-w-0">
+            <h3 id="step-title" class="font-serif text-[15px] font-bold text-ivory leading-none">Шаг 1. Выберите бокал подачи</h3>
+            <p id="step-subtitle" class="text-[9.5px] text-ivory-muted mt-0.5 leading-tight">Выберите бокал и нажмите «Далее»</p>
+          </div>
+          <span id="step-badge" class="text-[8.5px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-md bg-emerald/40 text-emerald-light border border-emerald-light/30 flex-shrink-0">Включено</span>
+        </div>
+        <!-- Контейнер сетки карточек (исправлено выравнивание justify-start, чтобы верх и низ не обрезались при скролле) -->
+        <div id="step-grid-container" class="flex-1 min-h-0 overflow-x-hidden overflow-y-auto no-scrollbar flex flex-col justify-start">
+        </div>
+        <!-- Навигация Назад / Далее -->
+        <div class="pt-1.5 mt-1.5 border-t border-white/10 flex items-center justify-between gap-2 flex-shrink-0">
+          <button type="button" id="btn-prev" onclick="changeStep(-1)" class="px-3 py-1.5 rounded-xl text-xs font-semibold text-ivory-muted hover:text-ivory bg-white/5 border border-white/10 transition flex items-center space-x-1">
+            <i data-lucide="arrow-left" class="w-3.5 h-3.5">
+            </i>
+            <span>Назад</span>
+          </button>
+          <span id="step-progress-dots" class="text-[9.5px] text-ivory-muted tracking-widest uppercase">Шаг 1 из 5</span>
+          <button type="button" id="btn-next" onclick="changeStep(1)" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-gold/90 hover:bg-gold text-night transition flex items-center space-x-1 shadow-md">
+            <span id="btn-next-text">Далее: Основа</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5">
+            </i>
+          </button>
+        </div>
+      </div>
+    </main>
+    <!-- НИЖНЯЯ ПАНЕЛЬ СТОИМОСТИ И СБРОСА -->
+    <footer class="flex-shrink-0 flex flex-col gap-1.5 px-0.5">
+      <div class="glass-stage rounded-2xl px-3.5 py-2 flex items-center justify-between gap-3">
+        <div>
+          <span class="text-[9.5px] uppercase tracking-wider text-ivory-muted block">Стоимость:</span>
+          <span id="footer-price" class="font-serif text-xl font-bold text-gold leading-none">0 р</span>
+        </div>
+        <button type="button" onclick="openOrderModal()" class="flex-1 bg-gradient-to-r from-ruby to-ruby-light hover:opacity-95 active:scale-98 text-ivory font-semibold text-xs py-2.5 px-3.5 rounded-xl shadow-lg shadow-ruby/30 border border-white/15 transition flex items-center justify-center space-x-1.5">
+          <span>Показать заказ официанту</span>
+          <i data-lucide="check-circle-2" class="w-4 h-4 flex-shrink-0">
+          </i>
+        </button>
+      </div>
+      <!-- Кнопка сброса под блоком заказа -->
+      <button type="button" onclick="confirmReset()" class="self-center flex items-center space-x-1.5 text-[10.5px] text-ivory-muted hover:text-rose-300 bg-ruby/15 hover:bg-ruby/30 border border-ruby/30 px-3.5 py-1 rounded-xl transition-all">
+        <i data-lucide="rotate-ccw" class="w-3 h-3">
+        </i>
+        <span>Сбросить и начать заново</span>
+      </button>
+    </footer>
+    <!-- МОДАЛЬНОЕ ОКНО ИТОГОВОГО ЗАКАЗА -->
+    <div id="order-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="modal-cocktail-name">
+      <div class="glass-stage rounded-3xl max-w-md w-full p-5 relative border border-gold/30">
+        <button type="button" onclick="closeOrderModal()" aria-label="Закрыть окно заказа" class="absolute top-4 right-4 text-ivory-muted hover:text-ivory bg-white/10 p-2 rounded-full">
+          <i data-lucide="x" class="w-4 h-4">
+          </i>
+        </button>
+        <div class="text-center mb-4">
+          <p class="text-[10px] uppercase tracking-[0.25em] text-gold font-semibold mb-1">ГОРЬКИЙ ГАСТРОБАР</p>
+          <h3 id="modal-cocktail-name" class="font-serif text-2xl font-bold text-ivory">Авторский коктейль</h3>
+          <p class="text-xs text-ivory-muted mt-0.5">Покажите этот экран официанту или бармену</p>
+        </div>
+        <div class="bg-black/40 rounded-2xl p-4 border border-white/10 space-y-2 mb-5">
+          <div class="flex justify-between text-[11px] font-semibold uppercase tracking-wider text-ivory-muted pb-1.5 border-b border-white/10">
+            <span>Состав микса</span>
+            <span>Цена</span>
+          </div>
+          <div id="modal-items-list" class="space-y-2 text-xs text-ivory">
+          </div>
+          <div class="pt-2.5 border-t border-white/10 flex justify-between items-center font-bold">
+            <span class="text-sm text-ivory">Итого:</span>
+            <span id="modal-total-price" class="text-gold text-xl font-serif">0 р</span>
+          </div>
+        </div>
+        <button type="button" onclick="closeOrderModal()" class="w-full bg-gold hover:bg-gold-soft text-night font-bold text-xs py-3.5 rounded-xl transition shadow-md">Вернуться к конструктору</button>
+      </div>
+    </div>
+    <script>
+        let state = {
+            step: 0,
+            glass: 'rocks',
+            base: null,
+            syrup: null,
+            mixer: null,
+            garnish: null,
+            customTitle: null,
+            pendingFix: null,
+            magicInProgress: false,
+            renderedStep: null,
+            pourTimer: null,
+            waveFrame: null
+        };
+
+        const STEP_INFO = [
+            { title: 'Шаг 1. Выберите бокал подачи', sub: 'Выберите бокал и нажмите «Далее»', badge: 'Включено', next: 'Далее: Основа' },
+            { title: 'Шаг 2. Основа коктейля', sub: 'Крепкий алкоголь или игристое из карты бара', badge: 'Обязательно', next: 'Далее: Сироп' },
+            { title: 'Шаг 3. Сироп и акцент', sub: 'Добавьте ягодный, цветочный или карамельный тон', badge: 'По желанию', next: 'Далее: Миксер' },
+            { title: 'Шаг 4. Миксер и баланс', sub: 'Игристое, тоник, сок или шот эспрессо', badge: 'По желанию', next: 'Далее: Декор' },
+            { title: 'Шаг 5. Финальный декор', sub: 'Ароматный штрих при подаче на стол', badge: 'По желанию', next: 'Готово • Заказ' }
+        ];
+
+        // Единый масштаб viewBox="0 0 80 88" для всех 4 бокалов с сохранением реальных пропорций посуды
+        const GLASS_CARD_SVGS = {
+            rocks: `<svg viewBox="0 0 80 88" class="w-full h-full max-h-[54px] mx-auto overflow-visible drop-shadow-md">
+                <path d="M20 34 L60 34 L56 76 C55 80, 50 82, 40 82 C30 82, 25 80, 24 76 Z" fill="rgba(255,255,255,0.07)" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/>
+                <path d="M24.5 73 L55.5 73" stroke="currentColor" stroke-width="2.8" stroke-opacity="0.35"/>
+                <path d="M25 40 L27.5 68" stroke="#FFFFFF" stroke-width="1.3" stroke-opacity="0.35" stroke-linecap="round"/>
+            </svg>`,
+            highball: `<svg viewBox="0 0 80 88" class="w-full h-full max-h-[54px] mx-auto overflow-visible drop-shadow-md">
+                <path d="M24 10 L56 10 L53 77 C52 80, 48 82, 40 82 C32 82, 28 80, 27 77 Z" fill="rgba(255,255,255,0.07)" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/>
+                <path d="M27.5 74 L52.5 74" stroke="currentColor" stroke-width="2.5" stroke-opacity="0.35"/>
+                <path d="M29 18 L31 68" stroke="#FFFFFF" stroke-width="1.3" stroke-opacity="0.35" stroke-linecap="round"/>
+            </svg>`,
+            coupe: `<svg viewBox="0 0 80 88" class="w-full h-full max-h-[54px] mx-auto overflow-visible drop-shadow-md">
+                <ellipse cx="40" cy="20" rx="25" ry="3.5" fill="rgba(255,255,255,0.09)" stroke="currentColor" stroke-width="2"/>
+                <path d="M15 20 C18 44, 29 51, 40 51 C51 51, 62 44, 65 20" fill="rgba(255,255,255,0.07)" stroke="currentColor" stroke-width="2.2"/>
+                <line x1="40" y1="51" x2="40" y2="80" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+                <ellipse cx="40" cy="81" rx="15" ry="2.5" fill="rgba(255,255,255,0.12)" stroke="currentColor" stroke-width="2"/>
+            </svg>`,
+            goblet: `<svg viewBox="0 0 80 88" class="w-full h-full max-h-[54px] mx-auto overflow-visible drop-shadow-md">
+                <ellipse cx="40" cy="12" rx="18" ry="3" fill="rgba(255,255,255,0.09)" stroke="currentColor" stroke-width="2"/>
+                <path d="M22 12 C19 44, 29 57, 40 57 C51 57, 61 44, 58 12" fill="rgba(255,255,255,0.07)" stroke="currentColor" stroke-width="2.2"/>
+                <line x1="40" y1="57" x2="40" y2="80" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+                <ellipse cx="40" cy="81" rx="15" ry="2.5" fill="rgba(255,255,255,0.12)" stroke="currentColor" stroke-width="2"/>
+            </svg>`
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCurrentStep(true);
+            updateVisualStage();
+            lucide.createIcons();
+
+            const modal = document.getElementById('order-modal');
+
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape' && !modal.classList.contains('hidden')) {
+                    closeOrderModal();
+                }
+            });
+
+            modal.addEventListener('click', (event) => {
+                if (event.target === modal) closeOrderModal();
+            });
+        });
+
+        function escapeHtml(value) {
+            return String(value ?? '').replace(/[&<>"']/g, (char) => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            })[char]);
+        }
+
+        function formatPrice(val) {
+            const rounded = Math.round(val * 10) / 10;
+            return Number.isInteger(rounded) ? `${rounded} р` : `${rounded.toFixed(1).replace('.0', '')} р`;
+        }
+
+        // Расчёт точного уровня жидкости в зависимости от геометрии чаши каждого бокала
+        function getTargetLiquidY() {
+            const count = (state.base ? 1 : 0) + (state.syrup ? 1 : 0) + (state.mixer ? 1 : 0);
+            const levels = {
+                rocks:    [114, 92, 72, 54], // Чаша: Y от 42 до 134
+                highball: [118, 92, 64, 34], // Чаша: Y от 20 до 137
+                coupe:    [75,  61, 49, 39], // Чаша: Y от 32 до 86
+                goblet:   [80,  64, 48, 34]  // Чаша: Y от 24 до 94
+            };
+            const glassLevels = levels[state.glass] || levels.rocks;
+            return glassLevels[Math.min(count, 3)];
+        }
+
+        function getGlassRimY() {
+            const rims = { rocks: 38, highball: 18, coupe: 29, goblet: 22 };
+            return rims[state.glass] || 30;
+        }
+
+        function goToStep(idx) {
+            if (state.magicInProgress) return;
+            const nextStep = Math.max(0, Math.min(4, idx));
+            const stepChanged = state.step !== nextStep;
+            state.step = nextStep;
+            renderCurrentStep(stepChanged);
+            updateVisualStage();
+        }
+
+        function changeStep(delta) {
+            if (state.magicInProgress) return;
+            if (state.step === 4 && delta > 0) {
+                openOrderModal();
+                return;
+            }
+            goToStep(state.step + delta);
+        }
+
+        function updateStepHeadersAndPills() {
+            const info = STEP_INFO[state.step];
+            document.getElementById('step-title').innerText = info.title;
+            document.getElementById('step-subtitle').innerText = info.sub;
+            document.getElementById('step-badge').innerText = info.badge;
+            document.getElementById('btn-next-text').innerText = info.next;
+            document.getElementById('step-progress-dots').innerText = `Шаг ${state.step + 1} из 5`;
+            document.getElementById('btn-prev').style.visibility = state.step === 0 ? 'hidden' : 'visible';
+
+            for (let i = 0; i < 5; i++) {
+                const pill = document.getElementById(`step-pill-${i}`);
+                const hasSelection = (i === 0 && state.glass) || (i === 1 && state.base) || (i === 2 && state.syrup) || (i === 3 && state.mixer) || (i === 4 && state.garnish);
+                if (i === state.step) {
+                    pill.className = 'py-1.5 px-1 rounded-xl text-[9.5px] font-bold uppercase tracking-wider border transition text-center bg-gold text-night border-gold shadow-sm';
+                } else if (hasSelection) {
+                    pill.className = 'py-1.5 px-1 rounded-xl text-[9.5px] font-bold uppercase tracking-wider border transition text-center bg-emerald/35 text-ivory border-emerald-light/40';
                 } else {
-                    // Replace oldest selection for smooth UX
-                    state.accents.shift();
-                    state.accents.push(id);
+                    pill.className = 'py-1.5 px-1 rounded-xl text-[9.5px] font-semibold uppercase tracking-wider border transition text-center bg-white/5 text-ivory-muted border-white/10';
                 }
             }
-            renderAllOptions();
-            updateUI();
+        }
+
+        // Оптимизированное точечное обновление карточек без пересоздания DOM-контейнера, если шаг не менялся
+        function updateCardsInPlace(container) {
+            const cards = container.querySelectorAll('[data-item-id]');
+            const volMultiplier = VOLUME_MULTIPLIERS[state.glass] || 1.0;
+
+            cards.forEach(card => {
+                const id = card.getAttribute('data-item-id');
+                const cat = card.getAttribute('data-category');
+                const isSelected = state[cat] === id;
+
+                card.classList.toggle('glass-item-active', isSelected);
+
+                const dot = card.querySelector('.selection-dot');
+                if (dot) {
+                    if (isSelected) {
+                        dot.className = 'selection-dot w-3.5 h-3.5 rounded-full border border-gold bg-gold shadow-[0_0_8px_rgba(212,175,55,0.65)] flex items-center justify-center flex-shrink-0 transition-all';
+                        dot.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-night"></span>';
+                    } else {
+                        dot.className = 'selection-dot w-3.5 h-3.5 rounded-full border border-white/25 bg-white/5 flex items-center justify-center flex-shrink-0 transition-all';
+                        dot.innerHTML = '';
+                    }
+                }
+
+                if (cat === 'glass') {
+                    const illustration = card.querySelector('.glass-card-illust');
+                    if (illustration) {
+                        illustration.className = `glass-card-illust flex-1 min-h-0 flex items-center justify-center w-full py-0.5 transition-colors ${isSelected ? 'text-gold' : 'text-ivory/80'}`;
+                    }
+                }
+            });
+        }
+
+        function renderCurrentStep(forceRebuild = false) {
+            const container = document.getElementById('step-grid-container');
+            updateStepHeadersAndPills();
+
+            // Если мы уже на этом шаге и карточки созданы — обновляем только классы выделения без перерисовки DOM
+            if (!forceRebuild && state.renderedStep === state.step && container.children.length > 0) {
+                updateCardsInPlace(container);
+                return;
+            }
+
+            const oldScrollTop = forceRebuild ? 0 : container.scrollTop;
+            const volMultiplier = VOLUME_MULTIPLIERS[state.glass] || 1.0;
+            let html = '';
+
+            // ШАГ 0: БОКАЛЫ — Симметричная сетка 2x2, единая высота карточек и области иллюстраций
+            if (state.step === 0) {
+                html = `<div class="grid grid-cols-2 grid-rows-2 gap-2 w-full h-full min-h-[210px] step-transition">` +
+                    BAR_MENU_CONFIG.glasses.map(g => {
+                        const isSelected = state.glass === g.id;
+                        const activeClass = isSelected ? 'glass-item-active' : '';
+                        const dotClass = isSelected
+                            ? 'w-3.5 h-3.5 rounded-full border border-gold bg-gold shadow-[0_0_8px_rgba(212,175,55,0.65)] flex items-center justify-center flex-shrink-0 transition-all'
+                            : 'w-3.5 h-3.5 rounded-full border border-white/25 bg-white/5 flex items-center justify-center flex-shrink-0 transition-all';
+                        const dotInner = isSelected ? '<span class="w-1.5 h-1.5 rounded-full bg-night"></span>' : '';
+
+                        return `
+                            <div data-category="glass" data-item-id="${g.id}" onclick="selectGlass('${g.id}')" class="glass-item ${activeClass} rounded-2xl p-2.5 cursor-pointer flex flex-col justify-between relative h-full w-full overflow-hidden">
+                                <!-- Верхняя строка: Название и объём + индикатор выбора -->
+                                <div class="flex items-start justify-between gap-1.5 w-full flex-shrink-0">
+                                    <div class="min-w-0">
+                                        <h4 class="font-serif font-bold text-[14px] text-ivory item-title">${escapeHtml(g.name)}</h4>
+                                        <span class="text-[10px] text-gold font-semibold block leading-tight mt-0.5">${escapeHtml(g.volume)}</span>
+                                    </div>
+                                    <span class="selection-dot ${dotClass}">${dotInner}</span>
+                                </div>
+
+                                <!-- Центральная область: Реалистичный силуэт бокала в едином масштабе -->
+                                <div class="glass-card-illust flex-1 min-h-0 flex items-center justify-center w-full py-0.5 transition-colors ${isSelected ? 'text-gold' : 'text-ivory/80'}">
+                                    ${GLASS_CARD_SVGS[g.id] || GLASS_CARD_SVGS.rocks}
+                                </div>
+
+                                <!-- Нижняя область: Краткое описание формы -->
+                                <div class="w-full pt-1 border-t border-white/10 flex-shrink-0">
+                                    <p class="text-[9.5px] text-ivory-muted item-sub text-center">${escapeHtml(g.sub)}</p>
+                                </div>
+                            </div>
+                        `;
+                    }).join('') + `</div>`;
+            }
+
+            // ШАГ 1: ОСНОВЫ (8 позиций в 2 колонки, полное отображение названий и описаний без обрезки)
+            else if (state.step === 1) {
+                html = `<div class="grid grid-cols-2 auto-rows-fr gap-1.5 w-full my-auto step-transition">` +
+                    BAR_MENU_CONFIG.bases.map(b => {
+                        const isSelected = state.base === b.id;
+                        const activeClass = isSelected ? 'glass-item-active' : '';
+                        const calcPrice = b.price * volMultiplier;
+                        const calcVolNum = parseInt(b.vol) * volMultiplier;
+                        const calcVolText = !isNaN(calcVolNum) ? `${Math.round(calcVolNum)} мл` : b.vol;
+                        const dotClass = isSelected
+                            ? 'w-3.5 h-3.5 rounded-full border border-gold bg-gold shadow-[0_0_8px_rgba(212,175,55,0.65)] flex items-center justify-center flex-shrink-0 transition-all'
+                            : 'w-3.5 h-3.5 rounded-full border border-white/25 bg-white/5 flex items-center justify-center flex-shrink-0 transition-all';
+                        const dotInner = isSelected ? '<span class="w-1.5 h-1.5 rounded-full bg-night"></span>' : '';
+
+                        return `
+                            <div data-category="base" data-item-id="${b.id}" onclick="selectIngredient('base', '${b.id}')" class="glass-item ${activeClass} rounded-xl px-2.5 py-2 cursor-pointer flex flex-col justify-between min-h-[60px]">
+                                <div class="flex items-start justify-between gap-1.5">
+                                    <div class="flex items-start space-x-1.5 min-w-0">
+                                        <span class="w-2.5 h-2.5 rounded-full flex-shrink-0 mt-1" style="background-color: ${b.color}"></span>
+                                        <h4 class="font-semibold text-[11px] text-ivory item-title">${escapeHtml(b.name)}</h4>
+                                    </div>
+                                    <span class="font-bold text-[11px] text-gold whitespace-nowrap flex-shrink-0">${formatPrice(calcPrice)}</span>
+                                </div>
+                                <div class="flex items-end justify-between gap-1.5 mt-1 pt-1 border-t border-white/5">
+                                    <p class="text-[9px] text-ivory-muted item-sub">${escapeHtml(b.sub)} • ${escapeHtml(calcVolText)}</p>
+                                    <span class="selection-dot ${dotClass}">${dotInner}</span>
+                                </div>
+                            </div>
+                        `;
+                    }).join('') + `</div>`;
+            }
+
+            // ШАГ 2: СИРОПЫ (6 позиций в 2 колонки)
+            else if (state.step === 2) {
+                html = `<div class="grid grid-cols-2 auto-rows-fr gap-2 w-full my-auto step-transition">` +
+                    BAR_MENU_CONFIG.syrups.map(s => {
+                        const isSelected = state.syrup === s.id;
+                        const activeClass = isSelected ? 'glass-item-active' : '';
+                        const calcPrice = s.price * volMultiplier;
+                        const calcVolNum = parseInt(s.vol) * volMultiplier;
+                        const calcVolText = !isNaN(calcVolNum) ? `${Math.round(calcVolNum)} мл` : s.vol;
+                        const dotClass = isSelected
+                            ? 'w-3.5 h-3.5 rounded-full border border-gold bg-gold shadow-[0_0_8px_rgba(212,175,55,0.65)] flex items-center justify-center flex-shrink-0 transition-all'
+                            : 'w-3.5 h-3.5 rounded-full border border-white/25 bg-white/5 flex items-center justify-center flex-shrink-0 transition-all';
+                        const dotInner = isSelected ? '<span class="w-1.5 h-1.5 rounded-full bg-night"></span>' : '';
+
+                        return `
+                            <div data-category="syrup" data-item-id="${s.id}" onclick="selectIngredient('syrup', '${s.id}')" class="glass-item ${activeClass} rounded-2xl px-2.5 py-2 cursor-pointer flex flex-col justify-between min-h-[70px]">
+                                <div class="flex items-start justify-between gap-1.5">
+                                    <div class="flex items-start space-x-1.5 min-w-0">
+                                        <span class="w-2.5 h-2.5 rounded-full flex-shrink-0 mt-1" style="background-color: ${s.color}"></span>
+                                        <h4 class="font-semibold text-[11.5px] text-ivory item-title">${escapeHtml(s.name)}</h4>
+                                    </div>
+                                    <span class="font-bold text-[11.5px] text-gold whitespace-nowrap flex-shrink-0">${formatPrice(calcPrice)}</span>
+                                </div>
+                                <div class="flex items-end justify-between gap-1.5 mt-1.5 pt-1 border-t border-white/5">
+                                    <p class="text-[9.5px] text-ivory-muted item-sub">${escapeHtml(s.sub)} • ${escapeHtml(calcVolText)}</p>
+                                    <span class="selection-dot ${dotClass}">${dotInner}</span>
+                                </div>
+                            </div>
+                        `;
+                    }).join('') + `</div>`;
+            }
+
+            // ШАГ 3: МИКСЕРЫ (6 позиций в 2 колонки)
+            else if (state.step === 3) {
+                html = `<div class="grid grid-cols-2 auto-rows-fr gap-2 w-full my-auto step-transition">` +
+                    BAR_MENU_CONFIG.mixers.map(m => {
+                        const isSelected = state.mixer === m.id;
+                        const activeClass = isSelected ? 'glass-item-active' : '';
+                        const calcPrice = m.price * volMultiplier;
+                        const calcVolNum = parseInt(m.vol) * volMultiplier;
+                        const calcVolText = !isNaN(calcVolNum) ? `${Math.round(calcVolNum)} мл` : m.vol;
+                        const dotClass = isSelected
+                            ? 'w-3.5 h-3.5 rounded-full border border-gold bg-gold shadow-[0_0_8px_rgba(212,175,55,0.65)] flex items-center justify-center flex-shrink-0 transition-all'
+                            : 'w-3.5 h-3.5 rounded-full border border-white/25 bg-white/5 flex items-center justify-center flex-shrink-0 transition-all';
+                        const dotInner = isSelected ? '<span class="w-1.5 h-1.5 rounded-full bg-night"></span>' : '';
+
+                        return `
+                            <div data-category="mixer" data-item-id="${m.id}" onclick="selectIngredient('mixer', '${m.id}')" class="glass-item ${activeClass} rounded-2xl px-2.5 py-2 cursor-pointer flex flex-col justify-between min-h-[70px]">
+                                <div class="flex items-start justify-between gap-1.5">
+                                    <div class="flex items-start space-x-1.5 min-w-0">
+                                        <span class="w-2.5 h-2.5 rounded-full flex-shrink-0 mt-1" style="background-color: ${m.color}"></span>
+                                        <h4 class="font-semibold text-[11.5px] text-ivory item-title">${escapeHtml(m.name)}</h4>
+                                    </div>
+                                    <span class="font-bold text-[11.5px] text-gold whitespace-nowrap flex-shrink-0">${formatPrice(calcPrice)}</span>
+                                </div>
+                                <div class="flex items-end justify-between gap-1.5 mt-1.5 pt-1 border-t border-white/5">
+                                    <p class="text-[9.5px] text-ivory-muted item-sub">${escapeHtml(m.sub)} • ${escapeHtml(calcVolText)}</p>
+                                    <span class="selection-dot ${dotClass}">${dotInner}</span>
+                                </div>
+                            </div>
+                        `;
+                    }).join('') + `</div>`;
+            }
+
+            // ШАГ 4: ДЕКОР (5 позиций, включая «Выбор бармена»)
+            else if (state.step === 4) {
+                html = `<div class="grid grid-cols-2 auto-rows-fr gap-2 w-full my-auto step-transition">` +
+                    BAR_MENU_CONFIG.garnishes.map((g, idx) => {
+                        const isSelected = state.garnish === g.id;
+                        const activeClass = isSelected ? 'glass-item-active' : '';
+                        const spanFull = idx === 4 ? 'col-span-2' : '';
+                        const dotClass = isSelected
+                            ? 'w-3.5 h-3.5 rounded-full border border-gold bg-gold shadow-[0_0_8px_rgba(212,175,55,0.65)] flex items-center justify-center flex-shrink-0 transition-all'
+                            : 'w-3.5 h-3.5 rounded-full border border-white/25 bg-white/5 flex items-center justify-center flex-shrink-0 transition-all';
+                        const dotInner = isSelected ? '<span class="w-1.5 h-1.5 rounded-full bg-night"></span>' : '';
+
+                        return `
+                            <div data-category="garnish" data-item-id="${g.id}" onclick="selectIngredient('garnish', '${g.id}')" class="glass-item ${activeClass} ${spanFull} rounded-2xl px-3 py-2 cursor-pointer flex flex-col justify-between min-h-[64px]">
+                                <div class="flex items-start justify-between gap-1.5">
+                                    <div class="flex items-center space-x-1.5 min-w-0">
+                                        <span class="text-base leading-none flex-shrink-0">${escapeHtml(g.badge)}</span>
+                                        <h4 class="font-semibold text-[11.5px] text-ivory item-title">${escapeHtml(g.name)}</h4>
+                                    </div>
+                                    <span class="font-bold text-[11px] text-gold whitespace-nowrap flex-shrink-0">${g.price > 0 ? formatPrice(g.price) : 'Бесплатно'}</span>
+                                </div>
+                                <div class="flex items-end justify-between gap-1.5 mt-1 pt-1 border-t border-white/5">
+                                    <p class="text-[9.5px] text-ivory-muted item-sub">${escapeHtml(g.sub)}</p>
+                                    <span class="selection-dot ${dotClass}">${dotInner}</span>
+                                </div>
+                            </div>
+                        `;
+                    }).join('') + `</div>`;
+            }
+
+            container.innerHTML = html;
+            state.renderedStep = state.step;
+            lucide.createIcons();
+
+            requestAnimationFrame(() => {
+                container.scrollTop = oldScrollTop;
+            });
         }
 
         function selectGlass(id) {
+            if (state.magicInProgress) return;
             state.glass = id;
-            renderAllOptions();
-            updateUI();
+            const baseObj = BAR_MENU_CONFIG.bases.find(i => i.id === state.base);
+            animateGlassPour(baseObj ? baseObj.color : '#D4AF37');
+            renderCurrentStep(false);
+            updateVisualStage();
         }
 
-        function selectGarnish(id) {
-            state.garnish = id;
-            renderAllOptions();
-            updateUI();
-        }
-
-        // --- STEPPER NAVIGATION ---
-        const STEP_TITLES = [
-            '',
-            'Далее: Характер и баланс',
-            'Далее: Вкусовые акценты',
-            'Далее: Подача и бокал',
-            'Далее: Финальный штрих',
-            ''
-        ];
-
-        function goToStep(step) {
-            state.currentStep = step;
-            for (let i = 1; i <= 5; i++) {
-                const panel = document.getElementById(`step-${i}`);
-                const tab = document.getElementById(`tab-step-${i}`);
-                if (i === step) {
-                    panel.classList.remove('hidden');
-                    tab.className = "step-tab flex-1 py-2 px-2.5 rounded-xl text-xs font-medium transition-all flex items-center justify-center gap-1.5 bg-wine-700 text-white shadow";
-                } else {
-                    panel.classList.add('hidden');
-                    tab.className = "step-tab flex-1 py-2 px-2.5 rounded-xl text-xs font-medium text-slate-400 hover:text-white transition-all flex items-center justify-center gap-1.5";
-                }
-            }
-
-            document.getElementById('btn-prev').disabled = (step === 1);
-            const btnNext = document.getElementById('btn-next');
-            const btnFinish = document.getElementById('btn-finish');
-
-            if (step < 5) {
-                btnNext.classList.remove('hidden');
-                btnFinish.classList.add('hidden');
-                document.getElementById('btn-next-text').textContent = STEP_TITLES[step];
+        function selectIngredient(category, id) {
+            if (state.magicInProgress) return;
+            state.customTitle = null;
+            if (state[category] === id) {
+                state[category] = null;
             } else {
-                btnNext.classList.add('hidden');
-                btnFinish.classList.remove('hidden');
+                state[category] = id;
+                const listKey = category === 'garnish' ? 'garnishes' : category + 's';
+                const found = BAR_MENU_CONFIG[listKey].find(i => i.id === id);
+                animateGlassPour(found && found.color ? found.color : '#D4AF37');
+            }
+            renderCurrentStep(false);
+            updateVisualStage();
+        }
+
+        // ЭТАП 4: ЕСТЕСТВЕННАЯ SVG-АНИМАЦИЯ НАЛИВАНИЯ ЖИДКОСТИ С КОЛЕБАНИЕМ ПОВЕРХНОСТИ
+        function animateGlassPour(streamColor) {
+            const wrapper = document.getElementById('hero-glass-wrapper');
+            const stream = document.getElementById('svg-pour-stream');
+            const ripple = document.getElementById('pour-ripple');
+            const surface = document.getElementById('liquid-surface');
+
+            const targetY = getTargetLiquidY();
+            const rimY = getGlassRimY();
+
+            // Обновляем цвет градиента струи
+            document.getElementById('stream-stop-top').setAttribute('stop-color', streamColor);
+            document.getElementById('stream-stop-mid').setAttribute('stop-color', streamColor);
+            document.getElementById('stream-stop-bot').setAttribute('stop-color', streamColor);
+
+            // Строим плавную сужающуюся форму струи от кромки бокала до уровня жидкости
+            stream.setAttribute('d', `M57.6 ${rimY} Q60 ${rimY - 2} 62.4 ${rimY} L61.1 ${targetY + 2} Q60 ${targetY + 5} 58.9 ${targetY + 2} Z`);
+            stream.setAttribute('opacity', '0.92');
+
+            // Круги на воде в точке соприкосновения струи с поверхностью напитка
+            ripple.setAttribute('cy', String(targetY));
+            ripple.classList.remove('ripple-active');
+            void ripple.offsetWidth;
+            ripple.classList.add('ripple-active');
+
+            wrapper.classList.remove('glass-pop-anim');
+            void wrapper.offsetWidth;
+            wrapper.classList.add('glass-pop-anim');
+
+            if (state.pourTimer) clearTimeout(state.pourTimer);
+            if (state.waveFrame) cancelAnimationFrame(state.waveFrame);
+
+            // Плавное затухающее колебание поверхности жидкости
+            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (!prefersReducedMotion) {
+                const startTime = performance.now();
+                const duration = 520;
+                const animateWave = (now) => {
+                    const elapsed = now - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const currentY = getTargetLiquidY();
+                    const decay = 1 - progress;
+                    const amp = Math.sin(progress * Math.PI * 3.5) * 4.2 * decay;
+                    surface.setAttribute('d', `M10 ${currentY} Q40 ${currentY - 3 + amp} 65 ${currentY - amp * 0.7} T115 ${currentY - 2 + amp * 0.4} L115 145 L10 145 Z`);
+                    if (progress < 1) {
+                        state.waveFrame = requestAnimationFrame(animateWave);
+                    } else {
+                        surface.setAttribute('d', `M10 ${currentY} Q40 ${currentY - 3} 65 ${currentY} T115 ${currentY - 2} L115 145 L10 145 Z`);
+                    }
+                };
+                state.waveFrame = requestAnimationFrame(animateWave);
+            }
+
+            state.pourTimer = setTimeout(() => {
+                stream.setAttribute('opacity', '0');
+                state.pourTimer = null;
+            }, 340);
+        }
+
+        // РАСШИРЕННЫЙ ГЕНЕРАТОР «МАГИИ ВКУСА»
+        function applyFlavorMagic() {
+            if (state.magicInProgress) return;
+            state.magicInProgress = true;
+
+            const btn = document.querySelector('button[onclick="applyFlavorMagic()"]');
+            const wrapper = document.getElementById('hero-glass-wrapper');
+
+            if (btn) {
+                btn.disabled = true;
+                btn.setAttribute('aria-busy', 'true');
+            }
+
+            wrapper.classList.add('shaker-anim');
+            document.getElementById('advice-text').innerText = 'Шеф-бармен взбалтывает шейкер и подбирает идеальный баланс вкуса...';
+
+            setTimeout(() => {
+                try {
+                    wrapper.classList.remove('shaker-anim');
+
+                    const magicPool = [
+                        { glass: 'goblet', base: 'gin', syrup: 'elder', mixer: 'prosecco', garnish: 'rosemary' },
+                        { glass: 'highball', base: 'gin', syrup: 'lavender', mixer: 'tonic', garnish: 'rosemary' },
+                        { glass: 'coupe', base: 'vodka', syrup: 'elder', mixer: 'grapefruit', garnish: 'orange' },
+                        { glass: 'highball', base: 'rum', syrup: 'coconut', mixer: 'pineapple', garnish: 'mint' },
+                        { glass: 'highball', base: 'tequila', syrup: 'passion', mixer: 'grapefruit', garnish: 'orange' },
+                        { glass: 'rocks', base: 'rum', syrup: 'passion', mixer: 'pineapple', garnish: 'bartender' },
+                        { glass: 'goblet', base: 'aperol', syrup: 'passion', mixer: 'prosecco', garnish: 'orange' },
+                        { glass: 'rocks', base: 'whiskey', syrup: 'salted_caramel', mixer: 'soda', garnish: 'orange' },
+                        { glass: 'coupe', base: 'whiskey', syrup: 'salted_caramel', mixer: 'espresso', garnish: 'bartender' },
+                        { glass: 'rocks', base: 'liqueur', syrup: 'salted_caramel', mixer: 'espresso', garnish: 'berries' },
+                        { glass: 'rocks', base: 'vodka', syrup: 'berry', mixer: 'soda', garnish: 'berries' },
+                        { glass: 'highball', base: 'tequila', syrup: 'berry', mixer: 'tonic', garnish: 'mint' },
+                        { glass: 'goblet', base: 'rum', syrup: 'lavender', mixer: 'prosecco', garnish: 'bartender' },
+                        { glass: 'rocks', base: 'whiskey', syrup: 'berry', mixer: 'soda', garnish: 'rosemary' }
+                    ];
+
+                    if (!window.recentMagics) window.recentMagics = [];
+                    
+                    let candidateIndex;
+                    let attempts = 0;
+                    do {
+                        candidateIndex = Math.floor(Math.random() * magicPool.length);
+                        attempts++;
+                    } while (window.recentMagics.includes(candidateIndex) && attempts < 10);
+                    
+                    window.recentMagics.push(candidateIndex);
+                    if (window.recentMagics.length > 5) window.recentMagics.shift();
+
+                    const pick = magicPool[candidateIndex];
+                    const baseItem = BAR_MENU_CONFIG.bases.find(i => i.id === pick.base);
+
+                    Object.assign(state, {
+                        glass: pick.glass,
+                        base: pick.base,
+                        syrup: pick.syrup,
+                        mixer: pick.mixer,
+                        garnish: pick.garnish,
+                        customTitle: null,
+                        pendingFix: null,
+                        step: 0
+                    });
+
+                    renderCurrentStep(true);
+                    updateVisualStage();
+                    animateGlassPour(baseItem ? baseItem.color : '#D4AF37');
+                } catch (error) {
+                    console.error('Не удалось создать рецепт:', error);
+                    document.getElementById('advice-text').innerText =
+                        'Не удалось подобрать рецепт. Попробуйте ещё раз.';
+                } finally {
+                    state.magicInProgress = false;
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.removeAttribute('aria-busy');
+                    }
+                }
+            }, 550);
+        }
+
+        function confirmReset() {
+            if (confirm("Вы уверены, что хотите сбросить все ингредиенты и начать заново?")) {
+                resetCocktail();
             }
         }
 
-        function nextStep() {
-            if (state.currentStep < 5) goToStep(state.currentStep + 1);
+        function resetCocktail() {
+            if (state.magicInProgress) return;
+
+            if (state.pourTimer) {
+                clearTimeout(state.pourTimer);
+                state.pourTimer = null;
+            }
+            if (state.waveFrame) {
+                cancelAnimationFrame(state.waveFrame);
+                state.waveFrame = null;
+            }
+
+            Object.assign(state, {
+                step: 0,
+                glass: 'rocks',
+                base: null,
+                syrup: null,
+                mixer: null,
+                garnish: null,
+                customTitle: null,
+                pendingFix: null
+            });
+
+            closeOrderModal();
+            renderCurrentStep(true);
+            updateVisualStage();
         }
 
-        function prevStep() {
-            if (state.currentStep > 1) goToStep(state.currentStep - 1);
+        function evaluateHarmony() {
+            const base = BAR_MENU_CONFIG.bases.find(i => i.id === state.base);
+            const syrup = BAR_MENU_CONFIG.syrups.find(i => i.id === state.syrup);
+            const mixer = BAR_MENU_CONFIG.mixers.find(i => i.id === state.mixer);
+            state.pendingFix = null;
+
+            if (!base && !syrup && !mixer) {
+                return { badge: 'Шаг 1 • Бокал', badgeClass: 'bg-white/10 text-ivory-muted', text: 'Выберите бокал, затем нажмите «Далее: Основа».' };
+            }
+
+            let badge = 'Процесс микса';
+            let badgeClass = 'bg-white/10 text-ivory-muted';
+            let text = 'Продолжайте собирать ваш авторский микс.';
+
+            if (syrup && mixer) {
+                const s = syrup.id;
+                const m = mixer.id;
+
+                if ((s === 'salted_caramel' && ['grapefruit', 'pineapple', 'tonic'].includes(m)) ||
+                    (s === 'coconut' && m === 'tonic')) {
+                    badge = 'Конфликт вкусов';
+                    badgeClass = 'bg-ruby/30 text-rose-200 border border-ruby-light/50';
+                    text = 'Компоненты могут конфликтовать по вкусу. Рекомендуем рассмотреть альтернативу.';
+                }
+                else if ((s === 'passion' && m === 'pineapple') || 
+                         (s === 'berry' && m === 'espresso') || 
+                         (s === 'coconut' && m === 'espresso') ||
+                         (s === 'lavender' && m === 'prosecco')) {
+                    badge = 'Спорное сочетание';
+                    badgeClass = 'bg-gold/30 text-gold-soft border border-gold/40';
+                    text = 'Сочетание может быть на любителя. Рекомендуем скорректировать выбор с учётом предыдущих ингредиентов, но экспериментировать никто не запрещает.';
+                }
+                else if ((s === 'elder' && m === 'tonic') || 
+                         (s === 'lavender' && m === 'grapefruit') || 
+                         (s === 'salted_caramel' && m === 'espresso') || 
+                         (s === 'coconut' && m === 'pineapple') || 
+                         (s === 'passion' && m === 'soda') ||
+                         (s === 'elder' && m === 'prosecco')) {
+                    badge = 'Идеальное сочетание';
+                    badgeClass = 'bg-emerald/40 text-emerald-200 border border-emerald-light/40';
+                    text = 'Идеальное сочетание. Компоненты гармонично дополняют друг друга.';
+                }
+                else {
+                    badge = 'Хороший баланс';
+                    badgeClass = 'bg-topaz/60 text-blue-200 border border-topaz-glow/40';
+                    text = 'Компоненты хорошо сочетаются, образуя приятный сбалансированный профиль.';
+                }
+            } else if (base) {
+                badge = 'Шаг 2 • Основа';
+                text = 'Отличный выбор. Теперь добавьте сироп или миксер для раскрытия вкуса.';
+            }
+
+            if (base && base.id === 'liqueur' && mixer && ['tonic', 'grapefruit', 'pineapple', 'soda'].includes(mixer.id)) {
+                state.pendingFix = { mixer: 'espresso' };
+                return { 
+                    badge: 'Конфликт текстур', 
+                    badgeClass: 'bg-ruby/30 text-rose-200 border border-ruby-light/50', 
+                    text: 'Ликёр конфликтует с кислотой и газом. Компоненты могут конфликтовать по вкусу. Рекомендуем рассмотреть альтернативу.', 
+                    fixLabel: 'Заменить на эспрессо' 
+                };
+            }
+
+            return { badge, badgeClass, text };
         }
 
-        // --- POETIC NAME & VISUALIZER ENGINE ---
-        function generatePoeticName() {
-            const baseObj = BASES.find(b => b.id === state.base);
-            const firstAccent = ACCENTS.find(a => a.id === state.accents[0]) || ACCENTS[0];
+        function fixIncompatibleMix() {
+            if (!state.pendingFix) return;
+            Object.assign(state, state.pendingFix);
+            state.pendingFix = null;
+            animateGlassPour('#D4AF37');
+            renderCurrentStep(false);
+            updateVisualStage();
+        }
+
+        function generateTitle() {
+            if (state.customTitle) return state.customTitle;
+            const base = BAR_MENU_CONFIG.bases.find(i => i.id === state.base);
+            const syrup = BAR_MENU_CONFIG.syrups.find(i => i.id === state.syrup);
+            if (!base) return 'Ваш авторский микс';
             
-            let moodPrefix = '';
-            if (state.sweetness < 30) moodPrefix = 'Горький ';
-            else if (state.sweetness > 70) moodPrefix = 'Бархатный ';
-            else if (state.character > 70) moodPrefix = 'Пряный ';
-            else moodPrefix = baseObj.poeticAdj + ' ';
-
-            return `«${moodPrefix}${firstAccent.poeticNoun}»`;
-        }
-
-        function calculateCocktailColors() {
-            const baseObj = BASES.find(b => b.id === state.base);
-            // Prioritize colorful fruit/berry accents over clear mixers
-            const colorfulAccent = state.accents
-                .map(id => ACCENTS.find(a => a.id === id))
-                .find(a => !['tonic', 'soda'].includes(a.id));
-
-            if (colorfulAccent) {
-                return { c1: colorfulAccent.color1, c2: colorfulAccent.color2 };
-            }
-            return { c1: baseObj.color1, c2: baseObj.color2 };
-        }
-
-        function updateUI() {
-            const baseObj = BASES.find(b => b.id === state.base);
-            const accentNames = state.accents.map(id => ACCENTS.find(a => a.id === id).name).join(', ');
-            const glassObj = GLASSES.find(g => g.id === state.glass);
-            const poeticName = generatePoeticName();
-
-            // Update ABV badge
-            let calcAbv = baseObj.abv;
-            if (calcAbv > 0) {
-                if (state.character > 70) calcAbv += 4;
-                if (state.glass === 'collins') calcAbv -= 3;
-            }
-            document.getElementById('abv-badge').textContent = calcAbv === 0 ? '0% Безалкогольный' : `~${calcAbv}% ABV`;
-
-            // Update Live Title & Summary
-            document.getElementById('live-cocktail-name').textContent = poeticName;
-            document.getElementById('live-cocktail-summary').textContent = `${baseObj.name} • ${accentNames} • ${glassObj.name}`;
-
-            // Update Liquid Colors
-            const colors = calculateCocktailColors();
-            document.getElementById('grad-stop-1').setAttribute('stop-color', colors.c1);
-            document.getElementById('grad-stop-2').setAttribute('stop-color', colors.c2);
-            document.getElementById('ambient-glow').style.backgroundColor = colors.c1;
-
-            // Render Dynamic SVG Glass & Garnish
-            renderCocktailSVG(colors);
-        }
-
-        function renderCocktailSVG(colors) {
-            const scene = document.getElementById('svg-scene');
-            const hasBubbles = state.base === 'sparkling' || state.accents.some(id => ['tonic', 'soda', 'ginger_ale'].includes(id));
-
-            let glassOutline = '';
-            let liquidRect = '';
-            let iceElements = '';
-            let clipId = `clip-${state.glass}`;
-            let rimY = 85;
-
-            if (state.glass === 'rocks') {
-                rimY = 85;
-                liquidRect = `<rect x="50" y="112" width="140" height="120" fill="url(#liquidGrad)" />`;
-                // Big King Cube Ice
-                iceElements = `
-                    <rect x="85" y="118" width="70" height="68" rx="10" fill="rgba(255,255,255,0.18)" stroke="rgba(255,255,255,0.35)" stroke-width="1.5" transform="rotate(-6 120 150)" />
-                    <path d="M95,128 L135,128" stroke="rgba(255,255,255,0.4)" stroke-width="2" stroke-linecap="round" transform="rotate(-6 120 150)" />
-                `;
-                glassOutline = `
-                    <path d="M58,85 L182,85 L172,215 C171,222 165,226 158,226 L82,226 C75,226 69,222 68,215 Z" fill="url(#glassReflect)" stroke="rgba(255,255,255,0.45)" stroke-width="2.5" />
-                    <path d="M68,215 L172,215 L170,224 C169,227 165,229 158,229 L82,229 C75,229 71,227 70,224 Z" fill="rgba(255,255,255,0.25)" />
-                `;
-            } else if (state.glass === 'collins') {
-                rimY = 45;
-                liquidRect = `<rect x="65" y="72" width="110" height="165" fill="url(#liquidGrad)" />`;
-                iceElements = `
-                    <rect x="88" y="84" width="32" height="32" rx="6" fill="rgba(255,255,255,0.2)" stroke="rgba(255,255,255,0.35)" transform="rotate(12 104 100)" />
-                    <rect x="115" y="122" width="34" height="34" rx="6" fill="rgba(255,255,255,0.18)" stroke="rgba(255,255,255,0.3)" transform="rotate(-15 132 139)" />
-                    <rect x="86" y="160" width="35" height="35" rx="6" fill="rgba(255,255,255,0.16)" stroke="rgba(255,255,255,0.3)" transform="rotate(8 103 177)" />
-                `;
-                glassOutline = `
-                    <path d="M74,45 L166,45 L160,224 C159,228 155,230 150,230 L90,230 C85,230 81,228 80,224 Z" fill="url(#glassReflect)" stroke="rgba(255,255,255,0.45)" stroke-width="2.5" />
-                `;
-            } else if (state.glass === 'coupe') {
-                rimY = 65;
-                liquidRect = `<rect x="40" y="82" width="160" height="70" fill="url(#liquidGrad)" />`;
-                glassOutline = `
-                    <path d="M45,65 L195,65 C190,118 155,142 120,142 C85,142 50,118 45,65 Z" fill="url(#glassReflect)" stroke="rgba(255,255,255,0.45)" stroke-width="2.5" />
-                    <line x1="120" y1="142" x2="120" y2="225" stroke="rgba(255,255,255,0.45)" stroke-width="4" />
-                    <path d="M82,228 C95,220 145,220 158,228 Z" fill="rgba(255,255,255,0.35)" stroke="rgba(255,255,255,0.45)" stroke-width="2" />
-                `;
-            } else if (state.glass === 'wine') {
-                rimY = 48;
-                liquidRect = `<rect x="55" y="88" width="130" height="75" fill="url(#liquidGrad)" />`;
-                iceElements = `
-                    <rect x="92" y="96" width="30" height="30" rx="6" fill="rgba(255,255,255,0.2)" stroke="rgba(255,255,255,0.35)" transform="rotate(-10 107 111)" />
-                    <rect x="118" y="108" width="28" height="28" rx="6" fill="rgba(255,255,255,0.18)" stroke="rgba(255,255,255,0.35)" transform="rotate(14 132 122)" />
-                `;
-                glassOutline = `
-                    <path d="M68,48 L172,48 C184,112 162,152 120,152 C78,152 56,112 68,48 Z" fill="url(#glassReflect)" stroke="rgba(255,255,255,0.45)" stroke-width="2.5" />
-                    <line x1="120" y1="152" x2="120" y2="226" stroke="rgba(255,255,255,0.45)" stroke-width="4" />
-                    <path d="M84,228 C95,221 145,221 156,228 Z" fill="rgba(255,255,255,0.35)" stroke="rgba(255,255,255,0.45)" stroke-width="2" />
-                `;
-            }
-
-            // Bubbles SVG
-            let bubblesSvg = '';
-            if (hasBubbles) {
-                bubblesSvg = `
-                    <g fill="rgba(255,255,255,0.6)">
-                        <circle cx="100" cy="180" r="2.5" class="bubble-1" />
-                        <circle cx="125" cy="195" r="2" class="bubble-2" />
-                        <circle cx="140" cy="175" r="3" class="bubble-3" />
-                        <circle cx="112" cy="165" r="2" class="bubble-4" />
-                    </g>
-                `;
-            }
-
-            // Garnish SVG
-            let garnishSvg = '';
-            if (state.garnish === 'orange_peel') {
-                garnishSvg = `
-                    <path d="M145,${rimY + 12} C165,${rimY - 22} 190,${rimY + 5} 168,${rimY + 25}" fill="none" stroke="#f97316" stroke-width="6" stroke-linecap="round" />
-                `;
-            } else if (state.garnish === 'smoked_rosemary') {
-                garnishSvg = `
-                    <g>
-                        <line x1="115" y1="${rimY + 45}" x2="155" y2="${rimY - 22}" stroke="#15803d" stroke-width="3" stroke-linecap="round" />
-                        <line x1="132" y1="${rimY + 15}" x2="124" y2="${rimY + 2}" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" />
-                        <line x1="138" y1="${rimY + 5}" x2="150" y2="${rimY - 1}" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" />
-                        <line x1="145" y1="${rimY - 6}" x2="137" y2="${rimY - 18}" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" />
-                        <path d="M155,${rimY - 25} Q145,${rimY - 40} 160,${rimY - 52}" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="2" class="smoke-anim" />
-                    </g>
-                `;
-            } else if (state.garnish === 'freeze_raspberry') {
-                garnishSvg = `
-                    <g fill="#e11d48">
-                        <circle cx="105" cy="${rimY + 22}" r="6" />
-                        <circle cx="111" cy="${rimY + 20}" r="5" />
-                        <circle cx="108" cy="${rimY + 26}" r="5" />
-                        <circle cx="135" cy="${rimY + 24}" r="2.5" />
-                        <circle cx="126" cy="${rimY + 19}" r="2" />
-                    </g>
-                `;
-            } else if (state.garnish === 'olives') {
-                garnishSvg = `
-                    <g>
-                        <line x1="95" y1="${rimY + 42}" x2="160" y2="${rimY - 18}" stroke="#d4af37" stroke-width="2" stroke-linecap="round" />
-                        <ellipse cx="132" cy="${rimY + 8}" rx="8" ry="6" transform="rotate(-42 132 ${rimY + 8})" fill="#65a30d" />
-                        <ellipse cx="145" cy="${rimY - 4}" rx="8" ry="6" transform="rotate(-42 145 ${rimY - 4})" fill="#65a30d" />
-                    </g>
-                `;
-            } else if (state.garnish === 'lime') {
-                garnishSvg = `
-                    <g transform="translate(158, ${rimY})">
-                        <circle cx="0" cy="0" r="18" fill="#4d7c0f" stroke="#ecfccb" stroke-width="2" />
-                        <circle cx="0" cy="0" r="14" fill="#84cc16" />
-                        <line x1="-14" y1="0" x2="14" y2="0" stroke="#ecfccb" stroke-width="1" />
-                        <line x1="0" y1="-14" x2="0" y2="14" stroke="#ecfccb" stroke-width="1" />
-                    </g>
-                `;
-            }
-
-            scene.innerHTML = `
-                <g clip-path="url(#${clipId})">
-                    ${liquidRect}
-                    ${iceElements}
-                    ${bubblesSvg}
-                </g>
-                ${garnishSvg}
-                ${glassOutline}
-            `;
-        }
-
-        // --- CHEF LUCKY MIX PRESETS ---
-        const CHEF_RECIPES = [
-            { base: 'gin', sweetness: 35, character: 30, accents: ['raspberry', 'rosemary', 'tonic'], glass: 'wine', garnish: 'smoked_rosemary' },
-            { base: 'bourbon', sweetness: 55, character: 85, accents: ['passionfruit', 'ginger_ale'], glass: 'rocks', garnish: 'orange_peel' },
-            { base: 'tequila', sweetness: 25, character: 60, accents: ['grapefruit', 'basil', 'soda'], glass: 'collins', garnish: 'lime' },
-            { base: 'sparkling', sweetness: 65, character: 20, accents: ['elderflower', 'cucumber'], glass: 'wine', garnish: 'freeze_raspberry' },
-            { base: 'rum', sweetness: 75, character: 50, accents: ['passionfruit', 'raspberry'], glass: 'coupe', garnish: 'freeze_raspberry' },
-            { base: 'non_alc', sweetness: 45, character: 30, accents: ['cucumber', 'basil', 'tonic'], glass: 'collins', garnish: 'lime' }
-        ];
-
-        function chefLuckyMix() {
-            const pick = CHEF_RECIPES[Math.floor(Math.random() * CHEF_RECIPES.length)];
-            state.base = pick.base;
-            state.sweetness = pick.sweetness;
-            state.character = pick.character;
-            state.accents = [...pick.accents];
-            state.glass = pick.glass;
-            state.garnish = pick.garnish;
-
-            document.getElementById('slider-sweetness').value = state.sweetness;
-            document.getElementById('slider-character').value = state.character;
-
-            renderAllOptions();
-            updateBalance();
-            showToast('✨ Шеф-бармен собрал гармоничный рецепт!');
-        }
-
-        // --- ORDER MODAL & COPY ---
-        function getFormattedRecipeData() {
-            const baseObj = BASES.find(b => b.id === state.base);
-            const accentNames = state.accents.map(id => ACCENTS.find(a => a.id === id).name).join(', ');
-            const glassObj = GLASSES.find(g => g.id === state.glass);
-            const garnishObj = GARNISHES.find(g => g.id === state.garnish);
-            const sText = document.getElementById('sweetness-label').textContent;
-            const cText = document.getElementById('character-label').textContent;
-            const guestName = document.getElementById('guest-name').value.trim();
-            const guestNotes = document.getElementById('guest-notes').value.trim();
-            const title = generatePoeticName();
-
-            return {
-                title,
-                baseName: baseObj.name,
-                balanceText: `${sText} • ${cText}`,
-                accentNames,
-                glassName: glassObj.name,
-                garnishName: garnishObj.name,
-                guestName,
-                guestNotes
+            const baseNameMap = {
+                'gin': 'Джин',
+                'rum': 'Ром',
+                'whiskey': 'Виски',
+                'vodka': 'Водка',
+                'tequila': 'Текила',
+                'aperol': 'Ликёр',
+                'liqueur': 'Ликёр',
+                'prosecco': 'Игристое вино'
             };
+            const cleanBaseName = baseNameMap[base.id] || 'Микс';
+            
+            const isFem = ['vodka', 'tequila'].includes(base.id);
+            const isNeut = ['prosecco'].includes(base.id);
+            
+            let adj = isFem ? 'Фирменная' : (isNeut ? 'Фирменное' : 'Фирменный');
+            
+            if (syrup) {
+                const adjMap = {
+                    passion: isFem ? 'Тропическая' : (isNeut ? 'Тропическое' : 'Тропический'),
+                    berry: isFem ? 'Ежевичная' : (isNeut ? 'Ежевичное' : 'Ежевичный'),
+                    elder: isFem ? 'Цветочная' : (isNeut ? 'Цветочное' : 'Цветочный'),
+                    lavender: isFem ? 'Лавандовая' : (isNeut ? 'Лавандовое' : 'Лавандовый'),
+                    salted_caramel: isFem ? 'Карамельная' : (isNeut ? 'Карамельное' : 'Карамельный'),
+                    coconut: isFem ? 'Кокосовая' : (isNeut ? 'Кокосовое' : 'Кокосовый')
+                };
+                adj = adjMap[syrup.id] || adj;
+            }
+
+            return `${adj} ${cleanBaseName}`;
+        }
+
+        function calculateTotal() {
+            let total = 0;
+            const volMultiplier = VOLUME_MULTIPLIERS[state.glass] || 1.0;
+
+            ['base', 'syrup', 'mixer'].forEach(cat => {
+                if (state[cat]) {
+                    const listKey = cat + 's';
+                    const item = BAR_MENU_CONFIG[listKey].find(i => i.id === state[cat]);
+                    if (item) total += (item.price * volMultiplier);
+                }
+            });
+
+            if (state.garnish) {
+                const item = BAR_MENU_CONFIG.garnishes.find(i => i.id === state.garnish);
+                if (item) total += item.price;
+            }
+
+            return total;
+        }
+
+        function updateVisualStage(overrideComment = null) {
+            ['rocks', 'highball', 'coupe', 'goblet'].forEach(g => {
+                document.getElementById(`outline-${g}`).classList.toggle('hidden', state.glass !== g);
+            });
+            document.getElementById('glass-clip-target').setAttribute('clip-path', `url(#clip-${state.glass})`);
+
+            const baseObj = BAR_MENU_CONFIG.bases.find(i => i.id === state.base);
+            const syrupObj = BAR_MENU_CONFIG.syrups.find(i => i.id === state.syrup);
+            const mixerObj = BAR_MENU_CONFIG.mixers.find(i => i.id === state.mixer);
+            const garnishObj = BAR_MENU_CONFIG.garnishes.find(i => i.id === state.garnish);
+
+            const cBottom = syrupObj ? syrupObj.color : (baseObj ? baseObj.color : '#8C1D35');
+            const cMid = baseObj ? baseObj.color : '#1A365D';
+            const cTop = mixerObj ? mixerObj.color : (baseObj ? baseObj.color : '#23533D');
+
+            document.getElementById('grad-bottom').setAttribute('stop-color', cBottom);
+            document.getElementById('grad-middle').setAttribute('stop-color', cMid);
+            document.getElementById('grad-top').setAttribute('stop-color', cTop);
+            document.getElementById('ambient-liquid-glow').style.backgroundColor = cMid;
+
+            const y = getTargetLiquidY();
+            const surface = document.getElementById('liquid-surface');
+            surface.setAttribute('d', `M10 ${y} Q40 ${y - 3} 65 ${y} T115 ${y - 2} L115 145 L10 145 Z`);
+
+            document.getElementById('fizz-bubbles').classList.toggle('hidden', !(mixerObj && mixerObj.fizzy));
+            document.getElementById('ice-cubes').classList.toggle('hidden', state.glass === 'coupe');
+
+            const gBadge = document.getElementById('garnish-badge');
+            if (garnishObj) {
+                gBadge.innerText = garnishObj.badge;
+                gBadge.classList.remove('scale-0');
+                gBadge.classList.add('scale-100');
+            } else {
+                gBadge.classList.remove('scale-100');
+                gBadge.classList.add('scale-0');
+            }
+
+            const glassObj = BAR_MENU_CONFIG.glasses.find(g => g.id === state.glass);
+            const parts = [glassObj ? `${glassObj.name} (${glassObj.volume})` : ''];
+            if (baseObj) parts.push(baseObj.name);
+            if (syrupObj) parts.push(syrupObj.name);
+            if (mixerObj) parts.push(mixerObj.name);
+            if (garnishObj) parts.push(garnishObj.id === 'bartender' ? 'Декор: выбор бармена' : garnishObj.name);
+
+            const recipeLine = document.getElementById('selected-recipe-line');
+            recipeLine.innerText = parts.filter(Boolean).join(' • ');
+
+            const harmony = evaluateHarmony();
+            const badgeEl = document.getElementById('harmony-badge');
+            badgeEl.className = `text-[8.5px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${harmony.badgeClass}`;
+            badgeEl.innerText = harmony.badge;
+
+            document.getElementById('cocktail-title').innerText = generateTitle();
+            document.getElementById('advice-text').innerText = overrideComment || harmony.text;
+
+            const fixBtn = document.getElementById('fix-recipe-btn');
+            if (state.pendingFix && harmony.fixLabel) {
+                fixBtn.classList.remove('hidden');
+                document.getElementById('fix-recipe-label').innerText = harmony.fixLabel;
+            } else {
+                fixBtn.classList.add('hidden');
+            }
+
+            document.getElementById('footer-price').innerText = formatPrice(calculateTotal());
         }
 
         function openOrderModal() {
-            const data = getFormattedRecipeData();
-            document.getElementById('modal-cocktail-title').textContent = data.title;
-            document.getElementById('modal-base').textContent = data.baseName;
-            document.getElementById('modal-balance').textContent = data.balanceText;
-            document.getElementById('modal-accents').textContent = data.accentNames;
-            document.getElementById('modal-glass').textContent = data.glassName;
-            document.getElementById('modal-garnish').textContent = data.garnishName;
-
-            const guestBadge = document.getElementById('modal-guest-badge');
-            guestBadge.textContent = data.guestName ? `Гость / Стол: ${data.guestName}` : 'Индивидуальный заказ гостя';
-
-            const notesRow = document.getElementById('modal-notes-row');
-            if (data.guestNotes) {
-                notesRow.classList.remove('hidden');
-                document.getElementById('modal-notes').textContent = data.guestNotes;
-            } else {
-                notesRow.classList.add('hidden');
+            if (state.magicInProgress) return;
+            if (!state.base) {
+                goToStep(1);
+                return;
             }
-
+            
+            const glassObj = BAR_MENU_CONFIG.glasses.find(g => g.id === state.glass);
+            const volMultiplier = VOLUME_MULTIPLIERS[state.glass] || 1.0;
+            
+            let listHtml = `<div class="flex justify-between items-center py-1 border-b border-white/10"><span class="text-ivory-muted">Бокал: <strong class="text-ivory">${escapeHtml(glassObj.name)} (${escapeHtml(glassObj.volume)})</strong></span><span class="text-[10px] text-emerald-light font-semibold">Включено</span></div>`;
+            
+            ['base', 'syrup', 'mixer'].forEach(cat => {
+                if (state[cat]) {
+                    const listKey = cat + 's';
+                    const item = BAR_MENU_CONFIG[listKey].find(i => i.id === state[cat]);
+                    if (item) {
+                        const calcPrice = item.price * volMultiplier;
+                        const calcVolNum = parseInt(item.vol) * volMultiplier;
+                        const calcVolText = !isNaN(calcVolNum) ? `${Math.round(calcVolNum)} мл` : item.vol;
+                        
+                        listHtml += `<div class="flex justify-between items-center py-0.5 gap-2"><span class="whitespace-normal leading-tight"><strong>${escapeHtml(item.name)}</strong> <span class="text-[10px] text-ivory-muted whitespace-nowrap">(${escapeHtml(calcVolText)})</span></span><span class="font-bold text-gold whitespace-nowrap flex-shrink-0">${formatPrice(calcPrice)}</span></div>`;
+                    }
+                }
+            });
+            
+            if (state.garnish) {
+                const item = BAR_MENU_CONFIG.garnishes.find(i => i.id === state.garnish);
+                if (item) {
+                    const garnishTitle = item.id === 'bartender' ? 'Декор: выбор бармена' : item.name;
+                    listHtml += `<div class="flex justify-between items-center py-0.5 gap-2"><span class="whitespace-normal leading-tight"><strong>${escapeHtml(garnishTitle)}</strong></span><span class="font-bold text-gold whitespace-nowrap flex-shrink-0">${item.price > 0 ? formatPrice(item.price) : 'Бесплатно'}</span></div>`;
+                }
+            }
+            
+            document.getElementById('modal-cocktail-name').innerText = generateTitle();
+            document.getElementById('modal-items-list').innerHTML = listHtml;
+            document.getElementById('modal-total-price').innerText = formatPrice(calculateTotal());
             const modal = document.getElementById('order-modal');
             modal.classList.remove('hidden');
             modal.classList.add('flex');
@@ -962,64 +1201,7 @@
             const modal = document.getElementById('order-modal');
             modal.classList.add('hidden');
             modal.classList.remove('flex');
-            if (state.waiterFullscreen) toggleWaiterFullscreen();
-        }
-
-        function toggleWaiterFullscreen() {
-            state.waiterFullscreen = !state.waiterFullscreen;
-            const card = document.getElementById('order-card-container');
-            const recipeContent = document.getElementById('modal-recipe-content');
-            const btn = document.getElementById('btn-waiter-mode');
-
-            if (state.waiterFullscreen) {
-                card.classList.add('max-w-2xl', 'p-8');
-                recipeContent.classList.replace('text-sm', 'text-lg');
-                btn.innerHTML = `<i data-lucide="minimize-2" class="w-4 h-4"></i><span>Обычный режим</span>`;
-            } else {
-                card.classList.remove('max-w-2xl', 'p-8');
-                recipeContent.classList.replace('text-lg', 'text-sm');
-                btn.innerHTML = `<i data-lucide="maximize-2" class="w-4 h-4"></i><span>Показать экран официанту (Крупно)</span>`;
-            }
-            lucide.createIcons();
-        }
-
-        function copyRecipeText() {
-            const d = getFormattedRecipeData();
-            const text = [
-                `🍸 ЗАКАЗ В БАР «ГОРЬКИЙ»`,
-                `Коктейль: ${d.title}`,
-                d.guestName ? `Столик / Гость: ${d.guestName}` : '',
-                `• Основа: ${d.baseName}`,
-                `• Баланс: ${d.balanceText}`,
-                `• Акценты: ${d.accentNames}`,
-                `• Бокал: ${d.glassName}`,
-                `• Украшение: ${d.garnishName}`,
-                d.guestNotes ? `• Пожелания: ${d.guestNotes}` : ''
-            ].filter(Boolean).join('\n');
-
-            const textarea = document.createElement('textarea');
-            textarea.value = text;
-            document.body.appendChild(textarea);
-            textarea.select();
-            try {
-                document.execCommand('copy');
-                showToast('Рецепт скопирован! Можно вставить в Telegram');
-            } catch (err) {
-                showToast('Не удалось скопировать');
-            }
-            document.body.removeChild(textarea);
-        }
-
-        function showToast(msg) {
-            const toast = document.getElementById('toast');
-            document.getElementById('toast-text').textContent = msg;
-            toast.classList.remove('opacity-0');
-            toast.classList.add('opacity-100');
-            setTimeout(() => {
-                toast.classList.remove('opacity-100');
-                toast.classList.add('opacity-0');
-            }, 2600);
         }
     </script>
-</body>
+  </body>
 </html>
